@@ -1,6 +1,4 @@
-﻿using BookLibProject.Presenter;
-using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,25 +12,21 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using Windows.System;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace BookLibProject 
+namespace BookLibProject
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MainUserView : Page
     {
-        public MainPage()
+        public MainUserView()
         {
-            this.Loaded += MainPage_Loaded;
+            this.InitializeComponent();
         }
 
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
-        {
-            Frame.Navigate(typeof(LoginView));
-        }
+
     }
 }
