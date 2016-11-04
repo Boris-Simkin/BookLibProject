@@ -8,9 +8,9 @@ namespace Model
 {
     abstract class AbstractItem
     {
-        public AbstractItem()
+        public AbstractItem(string itemName)
         {
-
+            ItemName = itemName;
         }
 
         private string _itemName;
@@ -37,13 +37,6 @@ namespace Model
             set { _copyNumber = value; }
         }
 
-        private int _itemID;
-
-        public int ISBN
-        {
-            get { return _itemID; }
-            private set { _itemID = value; }
-        }
-
+        protected int _itemID;
     }
 }

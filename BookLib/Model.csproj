@@ -107,6 +107,7 @@
     <Compile Include="AbstractItem.cs" />
     <Compile Include="Book.cs" />
     <Compile Include="BookLib.cs" />
+    <Compile Include="Category.cs" />
     <Compile Include="IBookLib.cs" />
     <Compile Include="IUsers.cs" />
     <Compile Include="ItemCollection.cs" />

@@ -30,10 +30,5 @@ namespace Model
         {
             throw new NotImplementedException();
         }
-
-
-
-
-
     }
 }
