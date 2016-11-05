@@ -15,6 +15,11 @@ namespace Model
             _subCategory = subCategory;
         }
 
+        static Journal()
+        {
+            SubCategoryDict = new Dictionary<JournalCategory, List<string>>();
+        }
+
         void UpdateDictionary(string value)
         {
             //Adding the category key to the dictionary if it's not exist

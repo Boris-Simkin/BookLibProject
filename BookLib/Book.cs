@@ -15,6 +15,11 @@ namespace Model
             _subCategory = subCategory;
         }
 
+        static Book()
+        {
+            SubCategoryDict = new Dictionary<BookCategory, List<string>>();
+        }
+
         void UpdateDictionary(string value)
         {
             //Adding the category key to the dictionary if it's not exist
@@ -46,8 +51,6 @@ namespace Model
         }
 
         static Dictionary<BookCategory, List<string>> SubCategoryDict;
-
-
 
         private string _subCategory;
 

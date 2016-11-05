@@ -11,7 +11,7 @@ namespace Model
 
         public ItemCollection()
         {
-
+            List<AbstractItem> _items = new List<AbstractItem>();
         }
 
         List<AbstractItem> _items;
@@ -23,7 +23,7 @@ namespace Model
 
         public void AddItem(AbstractItem item)
         {
-
+            _items.Add(item);
         }
 
         public AbstractItem GetItem()

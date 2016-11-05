@@ -54,7 +54,7 @@ namespace BookLibProject
             }
         }
 
-        private void submit(object sender, RoutedEventArgs e)
+        private void submitBtn_Click(object sender, RoutedEventArgs e)
         {
 
         }
