@@ -1,5 +1,4 @@
-﻿using BookLibProject;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -30,7 +29,7 @@ namespace Presenter
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(LoginView));
+            Frame.Navigate(typeof(View.LoginView));
         }
     }
 }

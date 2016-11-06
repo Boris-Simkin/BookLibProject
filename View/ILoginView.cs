@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BookLibProject
+namespace View
 {
     public interface ILoginView
     {
-        event EventHandler<SubmitEventArgs> Submit;
+        //event EventHandler<SubmitEventArgs> Submit;
+        event EventHandler registerBtnClick;
         void SetUserPage();
         void SetAdminPage();
     }
