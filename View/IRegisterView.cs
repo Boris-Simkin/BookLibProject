@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace View
 {
-    public class Class1
+    public interface IRegisterView
     {
+        event EventHandler submit;
+        event EventHandler goBack;
     }
 }

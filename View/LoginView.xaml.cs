@@ -22,9 +22,12 @@ namespace View
     /// </summary>
     public sealed partial class LoginView : Page, ILoginView
     {
+       // Views _views = Views.Instance;
+
         public LoginView()
         {
             this.InitializeComponent();
+            Views.LoginView = this;
             //Users users = new Users();
             //Login login = new Login(this, users);
         }
@@ -32,6 +35,7 @@ namespace View
         //public event EventHandler<SubmitEventArgs> Submit;
 
         public event EventHandler registerBtnClick;
+        public event EventHandler<SubmitEventArgs> Submit;
 
         private bool satisfyConditions()
         {
@@ -60,26 +64,21 @@ namespace View
 
         private void submitBtn_Click(object sender, RoutedEventArgs e)
         {
-            //if (Submit != null)
-            //    Submit(this, new SubmitEventArgs(usernameTxtBox.Text, passwordBox.Password));
+            if (Submit != null)
+                Submit(this, new SubmitEventArgs(usernameTxtBox.Text, passwordBox.Password));
         }
 
         private void registerBtn_Click(object sender, RoutedEventArgs e)
         {
-            //Frame.Navigate(typeof(RegisterView));
+            // _views.LoginView = null;
+
+            //Frame.Navigate(typeof(RegisterView), _views);
+
             if (registerBtnClick != null)
                 registerBtnClick(this, EventArgs.Empty);
         }
 
-        public void SetUserPage()
-        {
-            //Frame.Navigate(typeof(MainUserView));
-        }
 
-        public void SetAdminPage()
-        {
-            //Frame.Navigate(typeof(MainAdminView));
-        }
 
     }
 }

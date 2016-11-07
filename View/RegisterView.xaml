@@ -43,7 +43,7 @@
             <Button x:Name="cancleBtn" Content="Cancle" Click="cancleBtn_Click" Margin="416,334,0,0" Grid.Column="1" Grid.Row="1" VerticalAlignment="Top" HorizontalAlignment="Left" Width="120" Grid.ColumnSpan="2"/>
             <Button x:Name="submitBtn" Content="Submit" Click="submitBtn_Click" IsEnabled="False" Grid.Column="1" Margin="300,334,0,0" Grid.Row="1" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
             <TextBlock x:Name="textBlock" Grid.Column="1" HorizontalAlignment="Left" Margin="0,113,0,0" TextWrapping="Wrap" Text="Create a new account" VerticalAlignment="Top" FontSize="29.333" Grid.ColumnSpan="2"/>
-            <Image x:Name="image1" HorizontalAlignment="Left" Height="219" Margin="10,-109,0,0" VerticalAlignment="Top" Width="230" Source="Assets/LibIcon.png"/>
+            <Image x:Name="image1" HorizontalAlignment="Left" Height="219" Margin="10,-109,0,0" VerticalAlignment="Top" Width="230" Source="../Assets/SignUp.png" Grid.ColumnSpan="3"/>
             <TextBlock Grid.Column="1" TextWrapping="Wrap"    TextAlignment="Center" Text="Password:" Margin="315,0,0,364" HorizontalAlignment="Left" FontSize="14.667" Grid.Row="1" Grid.ColumnSpan="2" />
             <PasswordBox Grid.Column="1" x:Name="passwordBox"   FontSize="16"  PasswordChanged="passwordBox_PasswordChanged" Margin="315,15,0,0" VerticalAlignment="Top" Grid.Row="1" HorizontalAlignment="Left" Width="231" Grid.ColumnSpan="2"/>
             <TextBlock Grid.Column="1" TextWrapping="Wrap"    TextAlignment="Center" Text="Confirm:" Margin="315,85,0,279" HorizontalAlignment="Left" FontSize="14.667" Grid.Row="1" Grid.ColumnSpan="2" />

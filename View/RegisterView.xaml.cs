@@ -20,12 +20,18 @@ namespace View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class RegisterView : Page
+    public sealed partial class RegisterView : Page, IRegisterView
     {
+       // Views _views = Views.Instance;
+
         public RegisterView()
         {
             this.InitializeComponent();
+            Views.RegisterView = this;
         }
+
+        public event EventHandler submit;
+        public event EventHandler goBack;
 
         private bool satisfyConditions()
         {
@@ -48,15 +54,14 @@ namespace View
 
         private void cancleBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (Frame.CanGoBack)
-            {
-                Frame.GoBack();
-            }
+            if (goBack != null)
+                goBack(this, EventArgs.Empty);
         }
 
         private void submitBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            if (submit != null)
+                submit(this, EventArgs.Empty);
         }
     }
 }

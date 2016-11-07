@@ -8,9 +8,7 @@ namespace View
 {
     public interface ILoginView
     {
-        //event EventHandler<SubmitEventArgs> Submit;
+        event EventHandler<SubmitEventArgs> Submit;
         event EventHandler registerBtnClick;
-        void SetUserPage();
-        void SetAdminPage();
     }
 }
