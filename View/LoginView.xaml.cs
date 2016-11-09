@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -55,11 +56,11 @@ namespace View
 
         private void passwordBox_KeyDown(object sender, KeyRoutedEventArgs e)
         {
-            //if (e.Key.Equals(VirtualKey.Enter))
-            //{
-            //    if (Submit != null)
-            //        Submit(this, new SubmitEventArgs(usernameTxtBox.Text, passwordBox.Password));
-            //}
+            if (e.Key.Equals(VirtualKey.Enter))
+            {
+                if (Submit != null)
+                    Submit(this, new SubmitEventArgs(usernameTxtBox.Text, passwordBox.Password));
+            }
         }
 
         private void submitBtn_Click(object sender, RoutedEventArgs e)

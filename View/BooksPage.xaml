@@ -1,0 +1,43 @@
+﻿<Page
+    x:Class="View.BooksPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:View"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d" RequestedTheme="Light">
+
+    <Grid>
+        <ScrollViewer HorizontalScrollBarVisibility="Disabled">
+            <Grid >
+                <GridView x:Name="booksGridView" ItemClick="booksGridView_ItemClick" IsItemClickEnabled="True">
+                    <GridView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical" Margin="2" Width="120" Height="120">
+                                <Grid Width="100" Height="100">
+                                    <Grid.Background>
+                                        <ImageBrush Stretch="Fill" ImageSource="Assets/DefaultBookImage.png"/>
+
+
+                                    </Grid.Background>
+
+                                    <Image Source="{Binding CoverImage}"  Stretch="Fill" />
+
+                                </Grid>
+
+                                <TextBlock Text="{Binding ItemName}"/>
+
+                            </StackPanel>
+                        </DataTemplate>
+                    </GridView.ItemTemplate>
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapGrid ItemHeight="150" ItemWidth="200" Orientation="Horizontal" MaximumRowsOrColumns="6"/>
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                </GridView>
+            </Grid>
+        </ScrollViewer>
+
+    </Grid>
+</Page>

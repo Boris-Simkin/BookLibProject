@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    class Journal : AbstractItem
+    public class Journal : AbstractItem
     {
         public Journal(string journalName, int issn, JournalCategory category, string subCategory) : base(journalName)
         {

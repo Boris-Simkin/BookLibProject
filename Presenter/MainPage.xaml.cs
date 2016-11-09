@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,6 +24,8 @@ namespace Presenter
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        private readonly IItemsCollection _itemsCollection = new ItemsCollection();
+
         public MainPage()
         {
             this.Loaded += MainPage_Loaded;
@@ -43,6 +46,7 @@ namespace Presenter
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+
             SetLoginView();
         }
 
@@ -58,7 +62,12 @@ namespace Presenter
 
         private void LoginView_Submit(object sender, SubmitEventArgs e)
         {
-            Frame.Navigate(typeof(View.MainUserView));
+            
+            Frame.Navigate(typeof(View.MainView));
+            _itemsCollection.LoadData();
+            Views.MainView.BooksSource = _itemsCollection.GetBooks();
+            Views.MainView.JournalsSource = _itemsCollection.GetJournals();
+            Views.MainView.UserName = e.Username;
         }
 
         private void RegisterView_goBack(object sender, EventArgs e)

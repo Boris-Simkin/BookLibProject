@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    class Book : AbstractItem
+    public class Book : AbstractItem
     {
         public Book(string bookName, int isdn, BookCategory category, string subCategory) : base(bookName)
         {
@@ -69,5 +69,7 @@ namespace Model
             get { return _itemID; }
             private set { _itemID = value; }
         }
+
+
     }
 }

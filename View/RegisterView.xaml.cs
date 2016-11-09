@@ -22,8 +22,6 @@ namespace View
     /// </summary>
     public sealed partial class RegisterView : Page, IRegisterView
     {
-       // Views _views = Views.Instance;
-
         public RegisterView()
         {
             this.InitializeComponent();

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    abstract class AbstractItem
+    public abstract class AbstractItem
     {
         public AbstractItem(string itemName)
         {
@@ -35,6 +35,14 @@ namespace Model
         {
             get { return _copyNumber; }
             set { _copyNumber = value; }
+        }
+
+        private string _coverImage;
+
+        public string CoverImage
+        {
+            get { return _coverImage; }
+            set { _coverImage = value; }
         }
 
         protected int _itemID;
