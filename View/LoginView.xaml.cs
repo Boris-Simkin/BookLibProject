@@ -23,7 +23,7 @@ namespace View
     /// </summary>
     public sealed partial class LoginView : Page, ILoginView
     {
-       // Views _views = Views.Instance;
+        // Views _views = Views.Instance;
 
         public LoginView()
         {
@@ -34,6 +34,7 @@ namespace View
         }
 
         //public event EventHandler<SubmitEventArgs> Submit;
+        public string StringFromServer { set { stringFromServer.Text = value; } }
 
         public event EventHandler registerBtnClick;
         public event EventHandler<SubmitEventArgs> Submit;

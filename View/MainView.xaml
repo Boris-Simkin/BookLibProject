@@ -51,6 +51,8 @@
             <Rectangle/>
             <TextBlock x:Name="addNewItemTxtBlk" Text="Add new item" PointerPressed="addNewItemTxtBlk_PointerPressed"/>
             <Rectangle/>
+            <TextBlock x:Name="manageUsersTxtBlk" Text="Manage users" PointerPressed="manageUsersTxtBlk_PointerPressed"/>
+            <Rectangle/>
         </StackPanel>
         <Grid Grid.Column="1" Grid.Row="1" >
             <Frame x:Name="mainFrame"></Frame>

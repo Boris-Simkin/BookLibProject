@@ -28,8 +28,10 @@ namespace View
             Views.RegisterView = this;
         }
 
-        public event EventHandler submit;
-        public event EventHandler goBack;
+        public event EventHandler GoBack;
+        public event EventHandler<SubmitEventArgs> Submit;
+
+        public string StringFromServer { set { stringFromServer.Text = value; } }
 
         private bool satisfyConditions()
         {
@@ -52,14 +54,20 @@ namespace View
 
         private void cancleBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (goBack != null)
-                goBack(this, EventArgs.Empty);
+            if (GoBack != null)
+                GoBack(this, EventArgs.Empty);
         }
 
         private void submitBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (submit != null)
-                submit(this, EventArgs.Empty);
+            if (Submit != null)
+                Submit(this, new SubmitEventArgs(usernameTxtBox.Text, passwordBox.Password, 
+                    firstNameTxtBox.Text, lastNameTxtBox.Text));
+        }
+
+        public void SetLoginCreatedPage()
+        {
+            Frame.Navigate(typeof(View.LoginCreatedPage));
         }
     }
 }

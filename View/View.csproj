@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE;WINDOWS_APP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE;WINDOWS_APP;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -108,8 +108,14 @@
       <DependentUpon>BooksPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="IMainView.cs" />
+    <Compile Include="JournalDetailsPage.xaml.cs">
+      <DependentUpon>JournalDetailsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="JournalsPage.xaml.cs">
       <DependentUpon>JournalsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LoginCreatedPage.xaml.cs">
+      <DependentUpon>LoginCreatedPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainView.xaml.cs">
       <DependentUpon>MainView.xaml</DependentUpon>
@@ -135,7 +141,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="JournalDetailsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="JournalsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LoginCreatedPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

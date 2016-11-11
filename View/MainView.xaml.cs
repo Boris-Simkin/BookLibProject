@@ -116,5 +116,10 @@ namespace View
         {
             titleTxtBlk.Text = "Add new item";
         }
+
+        private void manageUsersTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            titleTxtBlk.Text = "Manage users";
+        }
     }
 }

@@ -1,5 +1,4 @@
-﻿using Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -21,23 +20,19 @@ namespace View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class JournalsPage : Page
+    public sealed partial class LoginCreatedPage : Page
     {
-        public JournalsPage()
+        public LoginCreatedPage()
         {
             this.InitializeComponent();
+          //  Views.LoginCreatedPage = this;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void submitBtn_Click(object sender, RoutedEventArgs e)
         {
-            var itemsSource = e.Parameter as List<AbstractItem>;
-            journalsGridView.ItemsSource = itemsSource;
-
-        }
-
-        private void journalsGridView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            Frame.Navigate(typeof(JournalDetailsPage), e.ClickedItem);
+            Frame.Navigate(typeof(View.LoginView));
+            //if (GoBack != null)
+            //    GoBack(this, EventArgs.Empty);
         }
     }
 }

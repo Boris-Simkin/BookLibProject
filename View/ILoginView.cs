@@ -10,5 +10,6 @@ namespace View
     {
         event EventHandler<SubmitEventArgs> Submit;
         event EventHandler registerBtnClick;
+        string StringFromServer { set; }
     }
 }

@@ -8,7 +8,7 @@ namespace Model
 {
     public interface IItemsCollection
     {
-        void LoadData();
+        Task<AuthenticationResult> LoadData();
         void AddItem(AbstractItem item);
         AbstractItem GetItem();
         List<AbstractItem> GetJournals();

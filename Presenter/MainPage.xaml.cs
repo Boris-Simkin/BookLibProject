@@ -1,9 +1,11 @@
-﻿using Model;
+﻿//#undef TestingMode
+using Model;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using View;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -25,6 +27,7 @@ namespace Presenter
     public sealed partial class MainPage : Page
     {
         private readonly IItemsCollection _itemsCollection = new ItemsCollection();
+        private readonly Users _user = new Users();
 
         public MainPage()
         {
@@ -37,16 +40,18 @@ namespace Presenter
             Views.LoginView.registerBtnClick += View_registerBtnClick;
             Views.LoginView.Submit += LoginView_Submit;
         }
+
+
         private void SetRegisterView()
         {
             Frame.Navigate(typeof(View.RegisterView));
-            Views.RegisterView.submit += RegisterView_submit;
-            Views.RegisterView.goBack += RegisterView_goBack;
+            Views.RegisterView.Submit += RegisterView_Submit;
+            Views.RegisterView.GoBack += GoBackToLoginView;
+            //Views.LoginCreatedPage.GoBack += GoBackToLoginView;
         }
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-
             SetLoginView();
         }
 
@@ -55,22 +60,69 @@ namespace Presenter
             SetRegisterView();
         }
 
-        private void RegisterView_submit(object sender, EventArgs e)
+        private async void RegisterView_Submit(object sender, SubmitEventArgs e)
         {
-            throw new NotImplementedException();
+            Task<AuthenticationResult> task = _user.Registration(e.Username, e.Password, e.Firstname, e.Lastname);
+            switch (await task)
+            {
+                case AuthenticationResult.Ok:
+                    Views.RegisterView.SetLoginCreatedPage();
+                    break;
+                case AuthenticationResult.ParamsIncorrect:
+                    Views.RegisterView.StringFromServer = "This username already in use";
+                    break;
+                case AuthenticationResult.ConnectionFailed:
+                    Views.RegisterView.StringFromServer = "Error connecting to the server";
+                    break;
+                default:
+                    break;
+            }
         }
 
+#if TestingMode
         private void LoginView_Submit(object sender, SubmitEventArgs e)
         {
-            
-            Frame.Navigate(typeof(View.MainView));
             _itemsCollection.LoadData();
+            Frame.Navigate(typeof(View.MainView));
             Views.MainView.BooksSource = _itemsCollection.GetBooks();
             Views.MainView.JournalsSource = _itemsCollection.GetJournals();
             Views.MainView.UserName = e.Username;
-        }
 
-        private void RegisterView_goBack(object sender, EventArgs e)
+        }
+#endif
+#if !TestingMode
+        private async void LoginView_Submit(object sender, SubmitEventArgs e)
+        {
+
+            //await _itemsCollection.LoadData();
+
+            Task<AuthenticationResult> task = _user.Authentication(e.Username, e.Password);
+
+            //task = AuthenticationResult.Ok;
+            switch (await task)
+            {
+                case AuthenticationResult.Ok:
+                    await _itemsCollection.LoadData();
+                    Frame.Navigate(typeof(View.MainView));
+
+
+                    Views.MainView.BooksSource = _itemsCollection.GetBooks();
+                    Views.MainView.JournalsSource = _itemsCollection.GetJournals();
+                    Views.MainView.UserName = e.Username;
+                    break;
+                case AuthenticationResult.ParamsIncorrect:
+                    Views.LoginView.StringFromServer = "Username or Password is incorrect!";
+                    break;
+                case AuthenticationResult.ConnectionFailed:
+                    Views.LoginView.StringFromServer = "Error connecting to the server";
+                    break;
+                default:
+                    break;
+            }
+
+    }
+#endif
+        private void GoBackToLoginView(object sender, EventArgs e)
         {
             SetLoginView();
         }

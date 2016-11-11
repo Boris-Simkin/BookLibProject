@@ -46,7 +46,7 @@
             <TextBlock Grid.Column="1" TextWrapping="Wrap"    TextAlignment="Center" Text="Last Name:" Margin="0,170,0,194" HorizontalAlignment="Left" FontSize="14.667" Grid.Row="1" Grid.ColumnSpan="2" IsHitTestVisible="False" />
         </Grid>
         <TextBlock Grid.Row="0" FontSize="66.667" TextAlignment="Center" Text="Registration" HorizontalAlignment="Left" Margin="270,35,0,0" Foreground="Black"/>
-        <TextBlock Grid.Row="2" x:Name="StringFromServer" FontSize="21.333" Foreground="#FFDE0000" TextAlignment="Center" Text=""/>
+        <TextBlock Grid.Row="2" x:Name="stringFromServer" FontSize="21.333" Foreground="#FFDE0000" TextAlignment="Center" Text=""/>
      </Grid>
 
 </Page>

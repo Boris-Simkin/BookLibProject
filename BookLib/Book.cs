@@ -8,7 +8,7 @@ namespace Model
 {
     public class Book : AbstractItem
     {
-        public Book(string bookName, int isdn, BookCategory category, string subCategory) : base(bookName)
+        public Book(string bookName, Guid isdn, BookCategory category, string subCategory) : base(bookName)
         {
             ISBN = isdn;
             _category = category;
@@ -32,6 +32,7 @@ namespace Model
 
         public enum BookCategory
         {
+            None,
             Fiction,
             Studying,
             Religion,
@@ -64,7 +65,7 @@ namespace Model
             }
         }
 
-        public int ISBN
+        public Guid ISBN
         {
             get { return _itemID; }
             private set { _itemID = value; }

@@ -45,6 +45,15 @@ namespace Model
             set { _coverImage = value; }
         }
 
-        protected int _itemID;
+        protected Guid _itemID;
+
+        //private Guid _guid;
+
+        //public Guid Guid
+        //{
+        //    get { return _guid; }
+        //    set { _guid = value; }
+        //}
+
     }
 }

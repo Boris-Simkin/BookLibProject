@@ -21,23 +21,26 @@ namespace View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class JournalsPage : Page
+    public sealed partial class JournalDetailsPage : Page
     {
-        public JournalsPage()
+        public JournalDetailsPage()
         {
             this.InitializeComponent();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            var itemsSource = e.Parameter as List<AbstractItem>;
-            journalsGridView.ItemsSource = itemsSource;
+            Journal journal = e.Parameter as Journal;
+            titleTxtBlk.Text = journal.ItemName;
+            if (journal.CoverImage != null)
+                coverImage.Source =
+                    new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri(journal.CoverImage));
+            dateTxtBlk.Text = journal.Date.ToString();
+            ISSNTxtBlk.Text = journal.ISSN.ToString();
+            categoryTxtBlk.Text = journal.Category.ToString();
+            subCategoryTxtBlk.Text = journal.SubCategory;
 
-        }
 
-        private void journalsGridView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            Frame.Navigate(typeof(JournalDetailsPage), e.ClickedItem);
         }
     }
 }

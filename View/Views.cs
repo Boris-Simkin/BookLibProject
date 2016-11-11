@@ -11,5 +11,6 @@ namespace View
         public static ILoginView LoginView { get; set; }
         public static IRegisterView RegisterView { get; set; }
         public static IMainView MainView { get; set; }
+       // public static ILoginCreatedPage LoginCreatedPage { get; set; }
     }
 }

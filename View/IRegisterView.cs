@@ -8,7 +8,12 @@ namespace View
 {
     public interface IRegisterView
     {
-        event EventHandler submit;
-        event EventHandler goBack;
+        event EventHandler<SubmitEventArgs> Submit;
+        event EventHandler GoBack;
+        //event EventHandler LoginCreated;
+        string StringFromServer { set; }
+        void SetLoginCreatedPage();
+        //void SetErrorMessage(string message);
+
     }
 }

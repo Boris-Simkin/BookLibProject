@@ -8,7 +8,7 @@ namespace Model
 {
     public class Journal : AbstractItem
     {
-        public Journal(string journalName, int issn, JournalCategory category, string subCategory) : base(journalName)
+        public Journal(string journalName, Guid issn, JournalCategory category, string subCategory) : base(journalName)
         {
             ISSN = issn;
             _category = category;
@@ -64,7 +64,7 @@ namespace Model
             }
         }
 
-        public int ISSN
+        public Guid ISSN
         {
             get { return _itemID; }
             private set { _itemID = value; }

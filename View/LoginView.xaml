@@ -41,7 +41,7 @@
             <Image x:Name="image1" HorizontalAlignment="Left" Height="219" Margin="10,-109,0,0" VerticalAlignment="Top" Width="230" Source="Assets/LibIcon.png" Grid.ColumnSpan="2"/>
         </Grid>
         <TextBlock x:Name="titleTextBlock" Grid.Row="0" FontSize="66.667" TextAlignment="Center" Text="Welcome to the library " HorizontalAlignment="Left" Margin="270,35,0,0" Foreground="Black"/>
-        <TextBlock Grid.Row="2" x:Name="StringFromServer" FontSize="21.333" Foreground="#FFDE0000" TextAlignment="Center" Text=""/>
+        <TextBlock Grid.Row="2" x:Name="stringFromServer" FontSize="21.333" Foreground="#FFDE0000" TextAlignment="Center" Text=""/>
     </Grid>
 
 </Page>

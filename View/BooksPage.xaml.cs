@@ -37,9 +37,7 @@ namespace View
 
         private void booksGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
- 
             Debug.WriteLine("Book!");
-
             Frame.Navigate(typeof(BookDetailsPage), e.ClickedItem);
         }
     }

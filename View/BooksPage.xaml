@@ -9,34 +9,32 @@
 
     <Grid>
         <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-            <Grid >
-                <GridView x:Name="booksGridView" ItemClick="booksGridView_ItemClick" IsItemClickEnabled="True">
-                    <GridView.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Vertical" Margin="2" Width="120" Height="120">
-                                <Grid Width="100" Height="100">
-                                    <Grid.Background>
-                                        <ImageBrush Stretch="Fill" ImageSource="Assets/DefaultBookImage.png"/>
+            <GridView x:Name="booksGridView" ItemClick="booksGridView_ItemClick" IsItemClickEnabled="True">
+                <GridView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Vertical" Margin="2" Width="120" Height="120">
+                            <Grid Width="100" Height="100">
+                                <Grid.Background>
+                                    <ImageBrush Stretch="Fill" ImageSource="Assets/DefaultBookImage.png"/>
 
 
-                                    </Grid.Background>
+                                </Grid.Background>
 
-                                    <Image Source="{Binding CoverImage}"  Stretch="Fill" />
+                                <Image Source="{Binding CoverImage}"  Stretch="Fill" />
 
-                                </Grid>
+                            </Grid>
 
-                                <TextBlock Text="{Binding ItemName}"/>
+                            <TextBlock Text="{Binding ItemName}"/>
 
-                            </StackPanel>
-                        </DataTemplate>
-                    </GridView.ItemTemplate>
-                    <GridView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapGrid ItemHeight="150" ItemWidth="200" Orientation="Horizontal" MaximumRowsOrColumns="6"/>
-                        </ItemsPanelTemplate>
-                    </GridView.ItemsPanel>
-                </GridView>
-            </Grid>
+                        </StackPanel>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapGrid ItemHeight="150" ItemWidth="200" Orientation="Horizontal" MaximumRowsOrColumns="6"/>
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+            </GridView>
         </ScrollViewer>
 
     </Grid>

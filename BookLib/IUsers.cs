@@ -8,7 +8,7 @@ namespace Model
 {
     public interface IUsers
     {
-        // Users.ResultEnum Authentication(string username, string password);
-         Task<Users.AuthenticationResult> Authentication(string username, string password);
+        Task<AuthenticationResult> Authentication(string username, string password);
+        Task<AuthenticationResult> Registration(string username, string password, string firstName, string lastName);
     }
 }
