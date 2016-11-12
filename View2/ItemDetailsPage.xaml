@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="View2.JournalDetailsPage"
+    x:Class="View2.ItemDetailsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:View2"
@@ -9,7 +9,7 @@
 
     <Grid>
         <Grid HorizontalAlignment="Left" Height="480" Margin="0,90,0,0" VerticalAlignment="Top" Width="445">
-            <Image x:Name="defaultCoverImage" Source="Assets/DefaultMagazineImage.png" Height="395" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="295" Margin="0,0,70,50" Stretch="Fill"/>
+            <Image x:Name="defaultCoverImage" Height="395" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="295" Margin="0,0,70,50" Stretch="Fill"/>
             <Image x:Name="coverImage" />
 
         </Grid>
@@ -24,7 +24,7 @@
             </StackPanel.Resources>
             <TextBlock x:Name="categoryTxtBlk"/>
             <TextBlock x:Name="subCategoryTxtBlk"/>
-            <TextBlock x:Name="ISSNTxtBlk"/>
+            <TextBlock x:Name="GuidTxtBlk"/>
             <TextBlock x:Name="dateTxtBlk"/>
             <TextBlock x:Name="copyNumberTxtBlk"/>
         </StackPanel>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace View2
+namespace Presenter2
 {
     public interface IRegisterView
     {
@@ -13,6 +13,7 @@ namespace View2
         //event EventHandler LoginCreated;
         string StringFromServer { set; }
         void SetLoginCreatedPage();
+        void SetPreviusView();
         //void SetErrorMessage(string message);
 
     }

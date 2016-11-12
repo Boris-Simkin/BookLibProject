@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
-using View;
+using View2;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -36,7 +36,7 @@ namespace Presenter
 
         private void SetLoginView()
         {
-            Frame.Navigate(typeof(View.LoginView));
+            Frame.Navigate(typeof(View2.LoginView));
             Views.LoginView.registerBtnClick += View_registerBtnClick;
             Views.LoginView.Submit += LoginView_Submit;
         }
@@ -44,7 +44,7 @@ namespace Presenter
 
         private void SetRegisterView()
         {
-            Frame.Navigate(typeof(View.RegisterView));
+            Frame.Navigate(typeof(View2.RegisterView));
             Views.RegisterView.Submit += RegisterView_Submit;
             Views.RegisterView.GoBack += GoBackToLoginView;
             //Views.LoginCreatedPage.GoBack += GoBackToLoginView;
@@ -83,7 +83,7 @@ namespace Presenter
         private void LoginView_Submit(object sender, SubmitEventArgs e)
         {
             _itemsCollection.LoadData();
-            Frame.Navigate(typeof(View.MainView));
+            Frame.Navigate(typeof(View2.MainView));
             Views.MainView.BooksSource = _itemsCollection.GetBooks();
             Views.MainView.JournalsSource = _itemsCollection.GetJournals();
             Views.MainView.UserName = e.Username;

@@ -45,6 +45,11 @@ namespace Model
             set { _coverImage = value; }
         }
 
+        public abstract string DefaultCoverImage
+        {
+            get;
+        }
+
         protected Guid _itemID;
 
         //private Guid _guid;

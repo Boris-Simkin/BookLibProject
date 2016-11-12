@@ -1,7 +1,6 @@
-﻿using Model;
+﻿using Presenter2;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -22,24 +21,26 @@ namespace View2
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class BooksPage : Page
+    public sealed partial class MainPage : Page
     {
-        public BooksPage()
+        public MainPage()
         {
             this.InitializeComponent();
+            this.Loaded += MainPage_Loaded;
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            var itemsSource = e.Parameter as List<AbstractItem>;
-            booksGridView.ItemsSource = itemsSource;
+            SetLoginView();
         }
 
-        private void booksGridView_ItemClick(object sender, ItemClickEventArgs e)
+        private void SetLoginView()
         {
-            Debug.WriteLine("Book!");
-            Frame.Navigate(typeof(BookDetailsPage), e.ClickedItem);
+            Frame.Navigate(typeof(View2.LoginView));
+            //Views.LoginView.registerBtnClick += View_registerBtnClick;
+            //Views.LoginView.Submit += LoginView_Submit;
         }
+
+
     }
-
 }

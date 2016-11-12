@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="View2.BooksPage"
+    x:Class="View2.ItemListPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:View2"
@@ -7,17 +7,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" RequestedTheme="Light">
 
+    
     <Grid>
         <ScrollViewer HorizontalScrollBarVisibility="Disabled">
-            <GridView x:Name="booksGridView" ItemClick="booksGridView_ItemClick" IsItemClickEnabled="True">
+            <GridView x:Name="itemsGridView" IsItemClickEnabled="True" ItemClick="itemsGridView_ItemClick">
                 <GridView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Vertical" Margin="2" Width="120" Height="120">
                             <Grid Width="100" Height="100">
                                 <Grid.Background>
-                                    <ImageBrush Stretch="Fill" ImageSource="Assets/DefaultBookImage.png"/>
-
-
+                                    <ImageBrush x:Name="defaultCoverImage" Stretch="Fill" ImageSource="{Binding DefaultCoverImage}"/>
                                 </Grid.Background>
 
                                 <Image Source="{Binding CoverImage}"  Stretch="Fill" />

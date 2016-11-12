@@ -70,5 +70,13 @@ namespace Model
             private set { _itemID = value; }
         }
 
+        public override string DefaultCoverImage
+        {
+            get
+            {
+                return "/Assets/DefaultMagazineImage.png";
+            }
+        }
+
     }
 }

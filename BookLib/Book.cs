@@ -72,5 +72,12 @@ namespace Model
         }
 
 
+        public override string DefaultCoverImage
+        {
+            get
+            {
+                return "/Assets/DefaultBookImage.png";
+            }
+        }
     }
 }

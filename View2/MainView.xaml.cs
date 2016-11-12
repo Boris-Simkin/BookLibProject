@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.ComponentModel;
+using Presenter2;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -31,22 +32,22 @@ namespace View2
         public event PropertyChangedEventHandler PropertyChanged;
 
 
-        public List<AbstractItem> BooksSource
-        {
-            set
-            {
-                booksSource = value;
-            }
-        }
+        //public List<AbstractItem> BooksSource
+        //{
+        //    set
+        //    {
+        //        booksSource = value;
+        //    }
+        //}
 
 
-        public List<AbstractItem> JournalsSource
-        {
-            set
-            {
-                journalsSource = value;
-            }
-        }
+        //public List<AbstractItem> JournalsSource
+        //{
+        //    set
+        //    {
+        //        journalsSource = value;
+        //    }
+        //}
 
         //public MainView()
         //{
@@ -58,21 +59,27 @@ namespace View2
         {
             this.DataContext = this;
             this.InitializeComponent();
-            Views.MainView = this;
             this.Loaded += MainView_Loaded;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            MainPresenter.MainView = this;
+            booksSource = ((List<AbstractItem>[])e.Parameter)[0];
+            journalsSource = ((List<AbstractItem>[])e.Parameter)[1];
         }
 
         private void MainView_Loaded(object sender, RoutedEventArgs e)
         {
             titleTxtBlk.Text = "Books";
             itemCountTxtBlk.Text = $"({booksSource.Count})";
-            mainFrame.Navigate(typeof(BooksPage), booksSource);
+            mainFrame.Navigate(typeof(ItemListPage), booksSource);
         }
 
-        public string UserName
-        {
-            set { userNameTextBlock.Text = $"Hi, {value}"; }
-        }
+        //public string UserName
+        //{
+        //    set { userNameTextBlock.Text = $"Hi, {value}"; }
+        //}
 
 
         string _currentItemCount;
@@ -96,7 +103,7 @@ namespace View2
             titleTxtBlk.Text = "Books";
             _currentItemCount = booksSource.Count.ToString();
             itemCountTxtBlk.Text = $"({booksSource.Count})";
-            mainFrame.Navigate(typeof(BooksPage), booksSource);
+            mainFrame.Navigate(typeof(ItemListPage), booksSource);
         }
 
         private void magazinesTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -104,7 +111,7 @@ namespace View2
             titleTxtBlk.Text = "Magazines";
             _currentItemCount = journalsSource.Count.ToString();
             itemCountTxtBlk.Text = $"({journalsSource.Count})";
-            mainFrame.Navigate(typeof(JournalsPage), journalsSource);
+            mainFrame.Navigate(typeof(ItemListPage), journalsSource);
         }
 
         private void myItemsTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
@@ -120,6 +127,11 @@ namespace View2
         private void manageUsersTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             titleTxtBlk.Text = "Manage users";
+        }
+
+        public void SetUserName(string userName)
+        {
+            userNameTextBlock.Text = $"Hi, {userName}";
         }
     }
 }

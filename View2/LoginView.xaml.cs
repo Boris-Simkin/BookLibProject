@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Model;
+using Presenter2;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -28,16 +30,31 @@ namespace View2
         public LoginView()
         {
             this.InitializeComponent();
-            Views.LoginView = this;
+            //Views.LoginView = this;
+            
             //Users users = new Users();
             //Login login = new Login(this, users);
+            this.Loaded += LoginView_Loaded;
         }
+
+        private void LoginView_Loaded(object sender, RoutedEventArgs e)
+        {
+             MainPresenter.LoginView = this;
+        }
+
+
 
         //public event EventHandler<SubmitEventArgs> Submit;
         public string StringFromServer { set { stringFromServer.Text = value; } }
 
         public event EventHandler registerBtnClick;
         public event EventHandler<SubmitEventArgs> Submit;
+        
+
+        public void SetMainView(List<AbstractItem> BooksSource, List<AbstractItem> JournalsSource)
+        {
+            Frame.Navigate(typeof(View2.MainView), new [] { BooksSource, JournalsSource });
+        }
 
         private bool satisfyConditions()
         {
@@ -80,7 +97,9 @@ namespace View2
                 registerBtnClick(this, EventArgs.Empty);
         }
 
-
-
+        public void SetRegistrationView()
+        {
+            Frame.Navigate(typeof(RegisterView));
+        }
     }
 }

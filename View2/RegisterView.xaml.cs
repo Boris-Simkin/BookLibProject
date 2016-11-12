@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Presenter2;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,7 +26,12 @@ namespace View2
         public RegisterView()
         {
             this.InitializeComponent();
-            Views.RegisterView = this;
+            this.Loaded += RegisterView_Loaded;
+        }
+
+        private void RegisterView_Loaded(object sender, RoutedEventArgs e)
+        {
+            MainPresenter.RegisterView = this;
         }
 
         public event EventHandler GoBack;
@@ -68,6 +74,11 @@ namespace View2
         public void SetLoginCreatedPage()
         {
             Frame.Navigate(typeof(View2.LoginCreatedPage));
+        }
+
+        public void SetPreviusView()
+        {
+            Frame.GoBack();
         }
     }
 }
