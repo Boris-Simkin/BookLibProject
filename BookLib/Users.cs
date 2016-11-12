@@ -21,6 +21,13 @@ namespace Model
         public string CurrentUserName { get; set; }
         public AuthenticationResult CurrentUserType { get; set; }
 
+        public List<User> _users = new List<User>();
+
+        public List<User> GetUsers()
+        {
+            return _users;
+        }
+
 
 
         public async Task<AuthenticationResult> Authentication(string username, string password)
