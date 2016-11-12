@@ -1,5 +1,5 @@
 ﻿using Model;
-using Presenter2;
+using Presenter;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,7 +18,7 @@ using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace View2
+namespace View
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -53,7 +53,7 @@ namespace View2
 
         public void SetMainView(List<AbstractItem> BooksSource, List<AbstractItem> JournalsSource)
         {
-            Frame.Navigate(typeof(View2.MainView), new [] { BooksSource, JournalsSource });
+            Frame.Navigate(typeof(View.MainView), new [] { BooksSource, JournalsSource });
         }
 
         private bool satisfyConditions()

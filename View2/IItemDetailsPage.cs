@@ -1,4 +1,4 @@
-﻿namespace View2
+﻿namespace View
 {
     public interface IItemDetailsPage
     {

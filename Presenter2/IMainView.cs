@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Presenter2
+namespace Presenter
 {
     public interface IMainView
     {

@@ -14,11 +14,11 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.ComponentModel;
-using Presenter2;
+using Presenter;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
-namespace View2
+namespace View
 {
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
