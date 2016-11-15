@@ -30,27 +30,27 @@
             </StackPanel.Resources>
             <Grid>
                 <TextBlock Text="Name: "/>
-                <TextBox x:Name="itemNameTxtBox" Width="320" HorizontalAlignment="Right"/>
+                <TextBox x:Name="itemNameTxtBox" Width="320" HorizontalAlignment="Right" TextChanged="PropChanged"/>
             </Grid>
             <Grid>
                 <TextBlock Text="Category: "/>
-                <ComboBox x:Name="categoryCombobox" HorizontalAlignment="Right" Width="320" />
+                <ComboBox x:Name="categoryCombobox" HorizontalAlignment="Right" Width="320" SelectionChanged="PropChanged" />
             </Grid>
             <Grid>
                 <TextBlock Text="Subcategory: "/>
-                <TextBox x:Name="subCategoryTxtBox" Width="320" HorizontalAlignment="Right"/>
+                <TextBox x:Name="subCategoryTxtBox" Width="320" HorizontalAlignment="Right" TextChanged="PropChanged"/>
             </Grid>
             <Grid>
                 <TextBlock  Text="Date:"/>
-                <DatePicker x:Name="datePicker" HorizontalAlignment="Right" Width="320"/>
+                <DatePicker x:Name="datePicker" HorizontalAlignment="Right" Width="320" DateChanged="datePicker_DateChanged"/>
             </Grid>
             <Grid>
                 <TextBlock  Text="Copy number:"/>
-                <TextBox x:Name="copyNumberTxtBox" KeyDown="copyNumberTxtBox_KeyDown" LostFocus="copyNumberTxtBox_LostFocus" HorizontalAlignment="Right" Width="86"/>
+                <TextBox x:Name="copyNumberTxtBox" KeyDown="copyNumberTxtBox_KeyDown" LostFocus="copyNumberTxtBox_LostFocus" HorizontalAlignment="Right" Width="86" TextChanged="PropChanged"/>
             </Grid>
             <Grid>
                 <TextBlock Text="Cover image (url):"/>
-                <TextBox x:Name="coverImageTxtBox" Width="320" HorizontalAlignment="Right"/>
+                <TextBox x:Name="coverImageTxtBox" Width="320" HorizontalAlignment="Right" TextChanged="PropChanged"/>
             </Grid>
             <Grid>
                 <TextBlock Text="Borrowed copies:"/>
@@ -62,9 +62,9 @@
             </Grid>
 
         </StackPanel>
-        <Button x:Name="borrowBtn" Content="Borrow" HorizontalAlignment="Left" Margin="373,392,0,0" VerticalAlignment="Top" FontSize="33.333"/>
-        <Button x:Name="deleteBtn" Content="Delete item" HorizontalAlignment="Left" Margin="583,326,0,0" VerticalAlignment="Top" FontSize="20"/>
-        <Button  Content="Save changes" HorizontalAlignment="Left" Margin="373,326,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <Button x:Name="borrowBtn" Content="Borrow" HorizontalAlignment="Left" Margin="373,392,0,0" VerticalAlignment="Top" FontSize="33.333" Click="borrowBtn_Click"/>
+        <Button x:Name="deleteBtn" Content="Delete item" HorizontalAlignment="Left" Margin="583,326,0,0" VerticalAlignment="Top" FontSize="20" Click="deleteBtn_Click"/>
+        <Button x:Name="saveBtn"  Content="Save changes" HorizontalAlignment="Left" Margin="373,326,0,0" VerticalAlignment="Top" FontSize="20" Click="Button_Click" IsEnabled="False"/>
 
     </Grid>
 </Page>

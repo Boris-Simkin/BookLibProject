@@ -15,6 +15,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.ComponentModel;
 using Presenter;
+using System.Diagnostics;
+using Windows.UI;
+using Windows.System;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -29,17 +32,24 @@ namespace View
         public event EventHandler BooksClicked;
         public event EventHandler MyMagazinesClicked;
         public event EventHandler MyBooksClicked;
-        public event EventHandler Logout;
+        public event EventHandler<StringEventArgs> SearchTextChanged;
 
         public int SetCounter { set { itemCountTxtBlk.Text = value.ToString(); } }
 
         public void HideToolBar()
         {
-            toolBarGrid.Visibility = Visibility.Collapsed; 
+            toolBarGrid.Visibility = Visibility.Collapsed;
         }
+
         public void ClearCounter()
         {
             itemCountTxtBlk.Text = string.Empty;
+        }
+
+        public void ClearTitle()
+        {
+            ClearCounter();
+            titleTxtBlk.Text = string.Empty;
         }
 
         public Visibility AdminTools { get; set; }
@@ -145,5 +155,34 @@ namespace View
         {
             Frame.Navigate(typeof(LoginView));
         }
+
+        private void searchTxtBox_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+
+            //titleTxtBlk.Text = "results";
+            //ClearCounter();
+        }
+
+        private string _tempTitle;
+
+        private void searchTxtBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (searchTxtBox.Text != string.Empty)
+            {
+                if (titleTxtBlk.Text != "Result")
+                    _tempTitle = titleTxtBlk.Text;
+                titleTxtBlk.Text = "Result";
+                searchTextBlk.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                searchTextBlk.Visibility = Visibility.Visible;
+                titleTxtBlk.Text = _tempTitle;
+            }
+            if (SearchTextChanged != null)
+                SearchTextChanged(this, new StringEventArgs(searchTxtBox.Text));
+
+        }
+
     }
 }

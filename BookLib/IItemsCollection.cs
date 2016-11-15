@@ -10,7 +10,10 @@ namespace Model
     {
         Task<AuthenticationResult> LoadData();
         void AddItem(AbstractItem item);
+        void UpdateItem(AbstractItem newitem);
+        void DeleteItem(AbstractItem item);
         AbstractItem GetItem();
+        List<AbstractItem> SearchByName(bool IsBook, string itemName);
         List<AbstractItem> GetJournals();
         List<AbstractItem> GetBooks();
     }

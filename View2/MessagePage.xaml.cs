@@ -21,23 +21,36 @@ namespace View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainPage : Page
+    public sealed partial class MessagePage : Page, IMessagePage
     {
-        public MainPage()
+        public MessagePage()
         {
             this.InitializeComponent();
-            this.Loaded += MainPage_Loaded;
+            this.Loaded += MessagePage_Loaded;
         }
 
-        private void MainPage_Loaded(object sender, RoutedEventArgs e)
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            SetLoginView();
+            messageTxtBlk.Text = e.Parameter as string;
         }
 
-        private void SetLoginView()
+        private void MessagePage_Loaded(object sender, RoutedEventArgs e)
         {
-            Frame.Navigate(typeof(View.LoginView));
+            MainPresenter.MessagePage = this;
         }
 
+        public event EventHandler ButtonPressed;
+
+        public void SetMessage(string message)
+        {
+            messageTxtBlk.Text = message;
+        }
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+            if (ButtonPressed != null)
+                ButtonPressed(this, EventArgs.Empty);
+        }
     }
 }

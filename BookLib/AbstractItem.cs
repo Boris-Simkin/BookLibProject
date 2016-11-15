@@ -49,13 +49,6 @@ namespace Model
             set { _coverImage = value; }
         }
 
-        //public abstract string DefaultCoverImage
-        //{
-        //    get;
-        //}
-
-        //protected Guid _itemID;
-
         public abstract string SubCategory
         {
             get;

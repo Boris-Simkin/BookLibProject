@@ -24,14 +24,25 @@ namespace View
     /// </summary>
     public sealed partial class ItemDetailsPageAdmin : Page, IItemDetailsPageAdmin
     {
+        AbstractItem _item;
+
+        public event EventHandler<ItemEventArgs> Save;
+        public event EventHandler<ItemEventArgs> Delete;
 
         public ItemDetailsPageAdmin()
         {
             this.InitializeComponent();
+            this.Loaded += ItemDetailsPageAdmin_Loaded;
+        }
+
+        private void ItemDetailsPageAdmin_Loaded(object sender, RoutedEventArgs e)
+        {
+            saveBtn.IsEnabled = false;
         }
 
         public void SetContent(AbstractItem item)
         {
+            _item = item;
             string defaultImageLocation;
             string category;
             if (item is Book)
@@ -53,7 +64,7 @@ namespace View
 
             this.defaultCoverImage.Source =
                 new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri($"ms-appx:///{defaultImageLocation}"));
-            if (item.CoverImage != null)
+            if (item.CoverImage != null && item.CoverImage != string.Empty)
             {
                 image.Source = new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri(item.CoverImage));
                 coverImageTxtBox.Text = item.CoverImage;
@@ -65,6 +76,7 @@ namespace View
             copyNumberTxtBox.Text = item.CopyNumber.ToString();
             itemNameTxtBox.Text = item.ItemName;
             borrowedСopiesTxtBlock.Text = item.BorrowedCopies.ToString();
+
         }
 
         private void copyNumberTxtBox_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -82,6 +94,58 @@ namespace View
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             MainPresenter.ItemDetailsPageAdmin = this;
+        }
+
+        private void borrowBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void deleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (Delete != null)
+                Delete(this, new ItemEventArgs(_item));
+            if (_item is Book)
+                Frame.Navigate(typeof(View.MessagePage), "Book is deleted.");
+            else
+                Frame.Navigate(typeof(View.MessagePage), "Magazine is deleted.");
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            //Is Book
+            if (_item is Book)
+                ((Book)_item).Category = (Book.BookCategory)categoryCombobox.SelectedItem;
+            //Is Magazine
+            else
+                ((Journal)_item).Category = (Journal.JournalCategory)categoryCombobox.SelectedItem;
+
+            _item.ItemName = itemNameTxtBox.Text;
+            _item.SubCategory = subCategoryTxtBox.Text;
+            _item.Date = datePicker.Date;
+            _item.CopyNumber = int.Parse(copyNumberTxtBox.Text);
+            _item.CoverImage = coverImageTxtBox.Text;
+
+            if (Save != null)
+                Save(this, new ItemEventArgs(_item));
+
+            saveBtn.IsEnabled = false;
+        }
+
+        private void PropChanged(object sender, TextChangedEventArgs e)
+        {
+            saveBtn.IsEnabled = itemNameTxtBox.Text != string.Empty;
+                
+        }
+
+        private void PropChanged(object sender, SelectionChangedEventArgs e)
+        {
+            saveBtn.IsEnabled = true;
+        }
+
+        private void datePicker_DateChanged(object sender, DatePickerValueChangedEventArgs e)
+        {
+            saveBtn.IsEnabled = true;
         }
 
     }

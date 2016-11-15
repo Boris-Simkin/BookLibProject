@@ -81,6 +81,10 @@ namespace View
 
             if (Submit != null)
                 Submit(this, new ItemEventArgs(_newItem));
+            if (typeCombobox.SelectedIndex == 0)
+                Frame.Navigate(typeof(View.MessagePage), "Book is created.");
+            else
+                Frame.Navigate(typeof(View.MessagePage), "Magazine is created.");
         }
 
         private void typeCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)

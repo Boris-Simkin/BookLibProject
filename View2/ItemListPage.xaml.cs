@@ -43,7 +43,11 @@ namespace View
             }
         }
 
-        public List<AbstractItem> SetSourceList { set { itemsGridView.ItemsSource = value; } }
+        public List<AbstractItem> SourceList
+        {
+            get { return (List<AbstractItem>)itemsGridView.ItemsSource; }
+            set { itemsGridView.ItemsSource = value; }
+        }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -63,5 +67,6 @@ namespace View
             else
                 Frame.Navigate(typeof(ItemDetailsPage));
         }
+
     }
 }

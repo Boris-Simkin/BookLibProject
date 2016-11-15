@@ -11,8 +11,12 @@ namespace Presenter
     {
         void HideToolBar();
         void IsAdmin(bool value);
-        int SetCounter { set; }
         void SetUserName(string userName);
+        void SetBooksListPage();
+        void ClearTitle();
+        int SetCounter { set; }
+
+        event EventHandler<StringEventArgs> SearchTextChanged;
         event EventHandler MagazinesClicked;
         event EventHandler BooksClicked;
         event EventHandler MyMagazinesClicked;

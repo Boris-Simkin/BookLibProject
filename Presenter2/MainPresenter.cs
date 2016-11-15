@@ -17,6 +17,25 @@ namespace Presenter
         private static IItemListPage _itemListPage;
         private static IItemDetailsPageAdmin _itemDetailsPageAdmin;
         private static IAddNewItemPage _addNewItemPage;
+        private static IMessagePage _messagePage;
+
+        public static IMessagePage MessagePage
+        {
+            get
+            {
+                return _messagePage;
+            }
+            set
+            {
+                _messagePage = value;
+                _messagePage.ButtonPressed += _messagePage_ButtonPressed;
+            }
+        }
+
+        private static void _messagePage_ButtonPressed(object sender, EventArgs e)
+        {
+            _mainView.SetBooksListPage();
+        }
 
         public static IItemDetailsPageAdmin ItemDetailsPageAdmin
         {
@@ -27,7 +46,19 @@ namespace Presenter
             set
             {
                 _itemDetailsPageAdmin = value;
+                _itemDetailsPageAdmin.Save += _itemDetailsPageAdmin_Submit;
+                _itemDetailsPageAdmin.Delete += _itemDetailsPageAdmin_Delete;
             }
+        }
+
+        private static void _itemDetailsPageAdmin_Delete(object sender, ItemEventArgs e)
+        {
+            _itemsCollection.DeleteItem(e.Item);
+        }
+
+        private static void _itemDetailsPageAdmin_Submit(object sender, ItemEventArgs e)
+        {
+            _itemsCollection.UpdateItem(e.Item);
         }
 
         public static IItemListPage ItemListPage
@@ -46,6 +77,7 @@ namespace Presenter
         private static void _itemListPage_ItemClicked(object sender, ItemEventArgs e)
         {
             _mainView.HideToolBar();
+            _mainView.ClearTitle();
             if (_user.CurrentUser.IsAdmin)
             {
                 _itemListPage.SetItemDetailsPage(true);
@@ -165,6 +197,24 @@ namespace Presenter
                 _mainView.MagazinesClicked += _mainView_MagazinesClicked;
                 _mainView.MyBooksClicked += _mainView_MyBooksClicked;
                 _mainView.MyMagazinesClicked += _mainView_MyMagazinesClicked;
+                _mainView.SearchTextChanged += _mainView_SearchTextChanged;
+            }
+        }
+
+        private static void _mainView_SearchTextChanged(object sender, StringEventArgs e)
+        {
+            var newList = _itemsCollection.SearchByName(_itemListPage.IsBookList, e.String);
+            if (!_itemListPage.SourceList.SequenceEqual(newList))
+            {
+                _mainView.SetCounter = newList.Count;
+                _itemListPage.SourceList = newList;
+            }
+            if (e.String == string.Empty)
+            {
+                if (_itemListPage.IsBookList)
+                    _itemListPage.SourceList = _itemsCollection.GetBooks();
+                else
+                    _itemListPage.SourceList = _itemsCollection.GetJournals();
             }
         }
 
@@ -183,7 +233,7 @@ namespace Presenter
             var items = _itemsCollection.GetJournals();
             _itemListPage.IsBookList = false;
             _mainView.SetCounter = items.Count;
-            _itemListPage.SetSourceList = items;
+            _itemListPage.SourceList = items;
         }
 
         private static void _mainView_BooksClicked(object sender, EventArgs e)
@@ -191,7 +241,7 @@ namespace Presenter
             var items = _itemsCollection.GetBooks();
             _itemListPage.IsBookList = true;
             _mainView.SetCounter = items.Count;
-            _itemListPage.SetSourceList = items;
+            _itemListPage.SourceList = items;
         }
 
         private async static void _loginView_Submit(object sender, SubmitEventArgs e)
