@@ -25,15 +25,9 @@ namespace View
     /// </summary>
     public sealed partial class LoginView : Page, ILoginView
     {
-        // Views _views = Views.Instance;
-
         public LoginView()
         {
             this.InitializeComponent();
-            //Views.LoginView = this;
-            
-            //Users users = new Users();
-            //Login login = new Login(this, users);
             this.Loaded += LoginView_Loaded;
         }
 
@@ -42,18 +36,15 @@ namespace View
              MainPresenter.LoginView = this;
         }
 
-
-
-        //public event EventHandler<SubmitEventArgs> Submit;
         public string StringFromServer { set { stringFromServer.Text = value; } }
 
         public event EventHandler registerBtnClick;
         public event EventHandler<SubmitEventArgs> Submit;
         
 
-        public void SetMainView(List<AbstractItem> BooksSource, List<AbstractItem> JournalsSource)
+        public void SetMainView()
         {
-            Frame.Navigate(typeof(View.MainView), new [] { BooksSource, JournalsSource });
+            Frame.Navigate(typeof(View.MainView));
         }
 
         private bool satisfyConditions()
@@ -89,10 +80,6 @@ namespace View
 
         private void registerBtn_Click(object sender, RoutedEventArgs e)
         {
-            // _views.LoginView = null;
-
-            //Frame.Navigate(typeof(RegisterView), _views);
-
             if (registerBtnClick != null)
                 registerBtnClick(this, EventArgs.Empty);
         }

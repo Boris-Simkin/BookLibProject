@@ -8,9 +8,8 @@ namespace Model
 {
     public class Journal : AbstractItem
     {
-        public Journal(string journalName, Guid issn, JournalCategory category, string subCategory) : base(journalName)
+        public Journal(string journalName, Guid guid, JournalCategory category, string subCategory) : base(journalName, guid)
         {
-            ISSN = issn;
             _category = category;
             _subCategory = subCategory;
         }
@@ -32,6 +31,7 @@ namespace Model
 
         public enum JournalCategory
         {
+            None,
             Traveling,
             Sport,
             Men,
@@ -54,27 +54,13 @@ namespace Model
 
         private string _subCategory;
 
-        public string SubCategory
+        public override string SubCategory
         {
             get { return _subCategory; }
             set
             {
                 UpdateDictionary(_subCategory);
                 _subCategory = value;
-            }
-        }
-
-        public Guid ISSN
-        {
-            get { return _itemID; }
-            private set { _itemID = value; }
-        }
-
-        public override string DefaultCoverImage
-        {
-            get
-            {
-                return "/Assets/DefaultMagazineImage.png";
             }
         }
 

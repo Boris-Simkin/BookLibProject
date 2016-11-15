@@ -23,37 +23,34 @@ namespace View
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainView : Page, IMainView, INotifyPropertyChanged
+    public sealed partial class MainView : Page, IMainView
     {
-        List<AbstractItem> booksSource;
+        public event EventHandler MagazinesClicked;
+        public event EventHandler BooksClicked;
+        public event EventHandler MyMagazinesClicked;
+        public event EventHandler MyBooksClicked;
+        public event EventHandler Logout;
 
-        List<AbstractItem> journalsSource;
+        public int SetCounter { set { itemCountTxtBlk.Text = value.ToString(); } }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public void HideToolBar()
+        {
+            toolBarGrid.Visibility = Visibility.Collapsed; 
+        }
+        public void ClearCounter()
+        {
+            itemCountTxtBlk.Text = string.Empty;
+        }
 
+        public Visibility AdminTools { get; set; }
 
-        //public List<AbstractItem> BooksSource
-        //{
-        //    set
-        //    {
-        //        booksSource = value;
-        //    }
-        //}
-
-
-        //public List<AbstractItem> JournalsSource
-        //{
-        //    set
-        //    {
-        //        journalsSource = value;
-        //    }
-        //}
-
-        //public MainView()
-        //{
-        //    this.InitializeComponent();
-        //    Views.RegisterView = this;
-        //}
+        public void IsAdmin(bool value)
+        {
+            if (value)
+                AdminTools = Visibility.Visible;
+            else
+                AdminTools = Visibility.Collapsed;
+        }
 
         public MainView()
         {
@@ -65,73 +62,88 @@ namespace View
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             MainPresenter.MainView = this;
-            booksSource = ((List<AbstractItem>[])e.Parameter)[0];
-            journalsSource = ((List<AbstractItem>[])e.Parameter)[1];
         }
 
         private void MainView_Loaded(object sender, RoutedEventArgs e)
         {
             titleTxtBlk.Text = "Books";
-            itemCountTxtBlk.Text = $"({booksSource.Count})";
-            mainFrame.Navigate(typeof(ItemListPage), booksSource);
+            SetBooksListPage();
         }
 
-        //public string UserName
-        //{
-        //    set { userNameTextBlock.Text = $"Hi, {value}"; }
-        //}
-
-
-        string _currentItemCount;
-        public string CurrentItemCount
+        public void SetBooksListPage()
         {
-            get { return _currentItemCount; }
-            set
-            {
-                if (value != this._currentItemCount)
-                {
-                    this._currentItemCount = value;
-                    if (PropertyChanged != null)
-                    {
-                        PropertyChanged(this, new PropertyChangedEventArgs("Itemcount"));
-                    }
-                }
-            }
+            toolBarGrid.Visibility = Visibility.Visible;
+            titleTxtBlk.Text = "Books";
+            mainFrame.Navigate(typeof(ItemListPage));
+            if (BooksClicked != null)
+                BooksClicked(this, EventArgs.Empty);
         }
+
+        public void SetMagazinesListPage()
+        {
+            toolBarGrid.Visibility = Visibility.Visible;
+            titleTxtBlk.Text = "Magazines";
+            mainFrame.Navigate(typeof(ItemListPage));
+            if (MagazinesClicked != null)
+                MagazinesClicked(this, EventArgs.Empty);
+        }
+
         private void booksTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            titleTxtBlk.Text = "Books";
-            _currentItemCount = booksSource.Count.ToString();
-            itemCountTxtBlk.Text = $"({booksSource.Count})";
-            mainFrame.Navigate(typeof(ItemListPage), booksSource);
+            SetBooksListPage();
         }
 
         private void magazinesTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            titleTxtBlk.Text = "Magazines";
-            _currentItemCount = journalsSource.Count.ToString();
-            itemCountTxtBlk.Text = $"({journalsSource.Count})";
-            mainFrame.Navigate(typeof(ItemListPage), journalsSource);
+            SetMagazinesListPage();
         }
 
-        private void myItemsTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
+        private void myBooksTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
+            toolBarGrid.Visibility = Visibility.Visible;
+            mainFrame.Navigate(typeof(ItemListPage));
             titleTxtBlk.Text = "My books";
+            if (MyBooksClicked != null)
+                MyBooksClicked(this, EventArgs.Empty);
+        }
+
+        private void SetListPage(EventHandler someEvent, string title)
+        {
+
+        }
+
+        private void myMagazinesTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            toolBarGrid.Visibility = Visibility.Visible;
+            mainFrame.Navigate(typeof(ItemListPage));
+            titleTxtBlk.Text = "My magazines";
+            if (MyMagazinesClicked != null)
+                MyMagazinesClicked(this, EventArgs.Empty);
         }
 
         private void addNewItemTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
+            toolBarGrid.Visibility = Visibility.Collapsed;
             titleTxtBlk.Text = "Add new item";
+            ClearCounter();
+            mainFrame.Navigate(typeof(AddNewItemPage));
         }
 
         private void manageUsersTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
+            toolBarGrid.Visibility = Visibility.Collapsed;
             titleTxtBlk.Text = "Manage users";
+            ClearCounter();
         }
 
         public void SetUserName(string userName)
         {
             userNameTextBlock.Text = $"Hi, {userName}";
+        }
+
+        private void logoutTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
+        {
+            Frame.Navigate(typeof(LoginView));
         }
     }
 }

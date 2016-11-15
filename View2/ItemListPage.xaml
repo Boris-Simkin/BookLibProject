@@ -7,8 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" RequestedTheme="Light">
 
-    
-    <Grid>
+
+    <Grid Name="gridTop" Tag="{Binding}">
         <ScrollViewer HorizontalScrollBarVisibility="Disabled">
             <GridView x:Name="itemsGridView" IsItemClickEnabled="True" ItemClick="itemsGridView_ItemClick">
                 <GridView.ItemTemplate>
@@ -16,14 +16,14 @@
                         <StackPanel Orientation="Vertical" Margin="2" Width="120" Height="120">
                             <Grid Width="100" Height="100">
                                 <Grid.Background>
-                                    <ImageBrush x:Name="defaultCoverImage" Stretch="Fill" ImageSource="{Binding DefaultCoverImage}"/>
+                                    <ImageBrush x:Name="defaultCoverImage" Stretch="Fill" ImageSource="{Binding Tag.defaultImageLocation, ElementName=gridTop}"/>
                                 </Grid.Background>
-
                                 <Image Source="{Binding CoverImage}"  Stretch="Fill" />
 
                             </Grid>
 
                             <TextBlock Text="{Binding ItemName}"/>
+                            
 
                         </StackPanel>
                     </DataTemplate>

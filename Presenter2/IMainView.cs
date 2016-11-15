@@ -9,8 +9,13 @@ namespace Presenter
 {
     public interface IMainView
     {
-        //List<AbstractItem> BooksSource { set; }
-        //List<AbstractItem> JournalsSource { set; }
+        void HideToolBar();
+        void IsAdmin(bool value);
+        int SetCounter { set; }
         void SetUserName(string userName);
+        event EventHandler MagazinesClicked;
+        event EventHandler BooksClicked;
+        event EventHandler MyMagazinesClicked;
+        event EventHandler MyBooksClicked;
     }
 }

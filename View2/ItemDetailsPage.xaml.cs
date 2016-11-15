@@ -1,4 +1,5 @@
 ﻿using Model;
+using Presenter;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,33 +31,40 @@ namespace View
             this.InitializeComponent();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        public void SetContent(AbstractItem item)
         {
-            AbstractItem item = e.Parameter as AbstractItem;
-
-
+            string defaultImageLocation;
+            string category;
             if (item is Book)
             {
-                GuidTxtBlk.Text = ((Book)item).ISBN.ToString();
-                categoryTxtBlk.Text = ((Book)item).Category.ToString();
-                subCategoryTxtBlk.Text = ((Book)item).SubCategory;
-             }
+                category = ((Book)item).Category.ToString();
+                defaultImageLocation = "Assets/DefaultBookImage.png";
+            }
             else
             {
-                GuidTxtBlk.Text = ((Journal)item).ISSN.ToString();
-                categoryTxtBlk.Text = ((Journal)item).Category.ToString();
-                subCategoryTxtBlk.Text = ((Journal)item).SubCategory;
+                category = ((Journal)item).Category.ToString();
+                defaultImageLocation = "Assets/DefaultMagazineImage.png";
             }
 
-            defaultCoverImage.Source =
-                 new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri($"ms-appx://{item.DefaultCoverImage}"));
-
-            titleTxtBlk.Text = item.ItemName;
+            this.defaultCoverImage.Source =
+                new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri($"ms-appx:///{defaultImageLocation}"));
             if (item.CoverImage != null)
-                coverImage.Source =
-                    new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri(item.CoverImage));
-            dateTxtBlk.Text = item.Date.ToString();
+            image.Source = new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri(item.CoverImage));
+            titleTxtBlk.Text = item.ItemName;
+            GuidTxtBlk.Text = item.Guid.ToString();
+            categoryTxtBlk.Text = category;
+            subCategoryTxtBlk.Text = item.SubCategory;
+            dateTxtBlk.Text = item.Date.ToString("d");
+            avaliableСopiesTxtBlk.Text = (item.CopyNumber - item.BorrowedCopies).ToString();
+        }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            MainPresenter.ItemDetailsPage = this;
+        }
+
+        private void borrowBtn_Click(object sender, RoutedEventArgs e)
+        {
 
         }
     }

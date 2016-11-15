@@ -8,9 +8,11 @@ namespace Model
 {
     public abstract class AbstractItem
     {
-        public AbstractItem(string itemName)
+        public AbstractItem(string itemName, Guid guid)
         {
             ItemName = itemName;
+            Guid = guid;
+            CopyNumber = 1;
         }
 
         private string _itemName;
@@ -21,9 +23,11 @@ namespace Model
             set { _itemName = value; }
         }
 
-        private DateTime _date;
+        public int BorrowedCopies { get; set; }
 
-        public DateTime Date
+        private DateTimeOffset _date;
+
+        public DateTimeOffset Date
         {
             get { return _date; }
             set { _date = value; }
@@ -45,20 +49,25 @@ namespace Model
             set { _coverImage = value; }
         }
 
-        public abstract string DefaultCoverImage
+        //public abstract string DefaultCoverImage
+        //{
+        //    get;
+        //}
+
+        //protected Guid _itemID;
+
+        public abstract string SubCategory
         {
             get;
+            set;
         }
+        private Guid _guid;
 
-        protected Guid _itemID;
-
-        //private Guid _guid;
-
-        //public Guid Guid
-        //{
-        //    get { return _guid; }
-        //    set { _guid = value; }
-        //}
+        public Guid Guid
+        {
+            get { return _guid; }
+            set { _guid = value; }
+        }
 
     }
 }

@@ -8,9 +8,8 @@ namespace Model
 {
     public class Book : AbstractItem
     {
-        public Book(string bookName, Guid isdn, BookCategory category, string subCategory) : base(bookName)
+        public Book(string bookName, Guid guid, BookCategory category, string subCategory) : base(bookName, guid)
         {
-            ISBN = isdn;
             _category = category;
             _subCategory = subCategory;
         }
@@ -55,7 +54,7 @@ namespace Model
 
         private string _subCategory;
 
-        public string SubCategory
+        public override string SubCategory
         {
             get { return _subCategory; }
             set
@@ -65,19 +64,5 @@ namespace Model
             }
         }
 
-        public Guid ISBN
-        {
-            get { return _itemID; }
-            private set { _itemID = value; }
-        }
-
-
-        public override string DefaultCoverImage
-        {
-            get
-            {
-                return "/Assets/DefaultBookImage.png";
-            }
-        }
     }
 }

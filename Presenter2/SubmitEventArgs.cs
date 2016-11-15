@@ -25,5 +25,6 @@ namespace Presenter
         public string Password { get; private set; }
         public string Firstname { get; private set; }
         public string Lastname { get; private set; }
+        //public bool IsAdmin { get; private set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,6 +12,84 @@ namespace Presenter
     {
         private static readonly IItemsCollection _itemsCollection;
         private static Users _user = new Users();
+
+        private static IItemDetailsPage _itemDetailsPage;
+        private static IItemListPage _itemListPage;
+        private static IItemDetailsPageAdmin _itemDetailsPageAdmin;
+        private static IAddNewItemPage _addNewItemPage;
+
+        public static IItemDetailsPageAdmin ItemDetailsPageAdmin
+        {
+            get
+            {
+                return _itemDetailsPageAdmin;
+            }
+            set
+            {
+                _itemDetailsPageAdmin = value;
+            }
+        }
+
+        public static IItemListPage ItemListPage
+        {
+            get
+            {
+                return _itemListPage;
+            }
+            set
+            {
+                _itemListPage = value;
+                _itemListPage.ItemClicked += _itemListPage_ItemClicked;
+            }
+        }
+
+        private static void _itemListPage_ItemClicked(object sender, ItemEventArgs e)
+        {
+            _mainView.HideToolBar();
+            if (_user.CurrentUser.IsAdmin)
+            {
+                _itemListPage.SetItemDetailsPage(true);
+                _itemDetailsPageAdmin.SetContent(e.Item);
+            }
+            else
+            {
+                _itemListPage.SetItemDetailsPage(false);
+                _itemDetailsPage.SetContent(e.Item);
+            }
+        }
+
+
+
+        public static IAddNewItemPage AddNewItemPage
+        {
+            get
+            {
+                return _addNewItemPage;
+            }
+            set
+            {
+                _addNewItemPage = value;
+                AddNewItemPage.Submit += AddNewItemPage_Submit;
+            }
+        }
+
+        private static void AddNewItemPage_Submit(object sender, ItemEventArgs e)
+        {
+            _itemsCollection.AddItem(e.Item);
+
+        }
+
+        public static IItemDetailsPage ItemDetailsPage
+        {
+            get
+            {
+                return _itemDetailsPage;
+            }
+            set
+            {
+                _itemDetailsPage = value;
+            }
+        }
 
         private static IRegisterView _registerView;
         public static IRegisterView RegisterView
@@ -58,7 +137,7 @@ namespace Presenter
             {
                 return _loginView;
             }
-           set
+            set
             {
                 _loginView = value;
                 _loginView.Submit += _loginView_Submit;
@@ -81,14 +160,68 @@ namespace Presenter
             set
             {
                 _mainView = value;
+                _mainView.IsAdmin(_user.CurrentUser.IsAdmin);
+                _mainView.BooksClicked += _mainView_BooksClicked;
+                _mainView.MagazinesClicked += _mainView_MagazinesClicked;
+                _mainView.MyBooksClicked += _mainView_MyBooksClicked;
+                _mainView.MyMagazinesClicked += _mainView_MyMagazinesClicked;
             }
         }
 
-
-        private static void _loginView_Submit(object sender, SubmitEventArgs e)
+        private static void _mainView_MyMagazinesClicked(object sender, EventArgs e)
         {
-            LoginView.SetMainView(_itemsCollection.GetBooks(), _itemsCollection.GetJournals());
-            _mainView.SetUserName(e.Username);
+            _itemListPage.IsBookList = false;
+        }
+
+        private static void _mainView_MyBooksClicked(object sender, EventArgs e)
+        {
+            _itemListPage.IsBookList = true;
+        }
+
+        private static void _mainView_MagazinesClicked(object sender, EventArgs e)
+        {
+            var items = _itemsCollection.GetJournals();
+            _itemListPage.IsBookList = false;
+            _mainView.SetCounter = items.Count;
+            _itemListPage.SetSourceList = items;
+        }
+
+        private static void _mainView_BooksClicked(object sender, EventArgs e)
+        {
+            var items = _itemsCollection.GetBooks();
+            _itemListPage.IsBookList = true;
+            _mainView.SetCounter = items.Count;
+            _itemListPage.SetSourceList = items;
+        }
+
+        private async static void _loginView_Submit(object sender, SubmitEventArgs e)
+        {
+
+
+
+            Task<AuthenticationResult> task = _user.Authentication(e.Username, e.Password);
+            switch (await task)
+            {
+                case AuthenticationResult.Ok:
+
+                    LoginView.SetMainView();
+                    _mainView.SetUserName(e.Username);
+
+                    break;
+                case AuthenticationResult.ParamsIncorrect:
+                    // _registerView.StringFromServer = "This username already in use";
+                    break;
+                case AuthenticationResult.ConnectionFailed:
+                    //_registerView.StringFromServer = "Error connecting to the server";
+                    break;
+                default:
+                    break;
+            }
+
+
+
+
+
         }
 
         static MainPresenter()
