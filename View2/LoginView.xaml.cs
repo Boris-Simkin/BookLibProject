@@ -67,6 +67,9 @@ namespace View
         {
             if (e.Key.Equals(VirtualKey.Enter))
             {
+                //Prevent the key pressed twice
+                e.Handled = true;
+
                 if (Submit != null)
                     Submit(this, new SubmitEventArgs(usernameTxtBox.Text, passwordBox.Password));
             }

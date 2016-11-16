@@ -109,11 +109,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IAddNewItemPage.cs" />
+    <Compile Include="IAdvancedSearchPage.cs" />
     <Compile Include="IItemDetailsPage.cs" />
     <Compile Include="IItemListPage.cs" />
     <Compile Include="IItemDetailsPageAdmin.cs" />
     <Compile Include="ILoginView.cs" />
     <Compile Include="IMainView.cs" />
+    <Compile Include="IManageUsers.cs" />
     <Compile Include="IMessagePage.cs" />
     <Compile Include="IRegisterView.cs" />
     <Compile Include="ItemEventArgs.cs" />

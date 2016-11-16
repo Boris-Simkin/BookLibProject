@@ -71,7 +71,7 @@ namespace View
             }
             GuidTxtBlk.Text = item.Guid.ToString();
             subCategoryTxtBox.Text = item.SubCategory;
-            datePicker.Date = item.Date;
+            datePicker.Date = (DateTimeOffset)item.Date;
             datePicker.MaxYear = DateTime.Today;
             copyNumberTxtBox.Text = item.CopyNumber.ToString();
             itemNameTxtBox.Text = item.ItemName;

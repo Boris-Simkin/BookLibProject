@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 
 namespace Presenter
 {
@@ -17,7 +18,32 @@ namespace Presenter
         private static IItemListPage _itemListPage;
         private static IItemDetailsPageAdmin _itemDetailsPageAdmin;
         private static IAddNewItemPage _addNewItemPage;
+        private static IAdvancedSearchPage _advancedSearchPage;
         private static IMessagePage _messagePage;
+
+        public static IAdvancedSearchPage AdvancedSearchPage
+        {
+            get
+            {
+                return _advancedSearchPage;
+            }
+            set
+            {
+                _advancedSearchPage = value;
+                _advancedSearchPage.Submit += _advancedSearchPage_Submit;
+            }
+        }
+
+        private static void _advancedSearchPage_Submit(object sender, ItemEventArgs e)
+        {
+            List<AbstractItem> result = _itemsCollection.AdvancedSearch(e.Item);
+
+            _itemListPage.SourceList = result;
+            //if (_itemListPage.IsBookList)
+            //    _itemListPage.SourceList = result;
+            //else
+            //    _itemListPage.SourceList = result;
+        }
 
         public static IMessagePage MessagePage
         {
@@ -105,9 +131,17 @@ namespace Presenter
             }
         }
 
-        private static void AddNewItemPage_Submit(object sender, ItemEventArgs e)
+        private async static void AddNewItemPage_Submit(object sender, ItemEventArgs e)
         {
-            _itemsCollection.AddItem(e.Item);
+            AuthenticationResult result = await _itemsCollection.AddItemToServer(e.Item);
+
+            if (result == AuthenticationResult.Ok)
+            {
+                _itemsCollection.AddItem(e.Item);
+                _mainView.ShowMessage("Item created");
+            }
+            else
+                _mainView.ShowMessage("Connection failed");
 
         }
 
@@ -198,7 +232,14 @@ namespace Presenter
                 _mainView.MyBooksClicked += _mainView_MyBooksClicked;
                 _mainView.MyMagazinesClicked += _mainView_MyMagazinesClicked;
                 _mainView.SearchTextChanged += _mainView_SearchTextChanged;
+                _mainView.Logout += _mainView_Logout;
             }
+        }
+
+        private static void _mainView_Logout(object sender, EventArgs e)
+        {
+            _loginView.Submit -= _loginView_Submit;
+            _itemsCollection.ClearList();
         }
 
         private static void _mainView_SearchTextChanged(object sender, StringEventArgs e)
@@ -244,40 +285,37 @@ namespace Presenter
             _itemListPage.SourceList = items;
         }
 
+
         private async static void _loginView_Submit(object sender, SubmitEventArgs e)
         {
-
-
-
             Task<AuthenticationResult> task = _user.Authentication(e.Username, e.Password);
+
             switch (await task)
             {
                 case AuthenticationResult.Ok:
-
+                    await _itemsCollection.LoadDataFromServer();
                     LoginView.SetMainView();
                     _mainView.SetUserName(e.Username);
-
                     break;
                 case AuthenticationResult.ParamsIncorrect:
-                    // _registerView.StringFromServer = "This username already in use";
+                    LoginView.StringFromServer = "Incorrect username or password";
                     break;
                 case AuthenticationResult.ConnectionFailed:
-                    //_registerView.StringFromServer = "Error connecting to the server";
+                    LoginView.StringFromServer = "Error connecting to the server";
                     break;
                 default:
                     break;
             }
+        }
 
-
-
-
+        private async static void requestSubmit(string username, string password)
+        {
 
         }
 
         static MainPresenter()
         {
             _itemsCollection = new ItemsCollection();
-            _itemsCollection.LoadData();
         }
     }
 }

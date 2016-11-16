@@ -41,40 +41,35 @@ namespace Model
 
         public async Task<AuthenticationResult> Authentication(string username, string password)
         {
-            //HttpClient httpClient = new HttpClient();
-            //HttpResponseMessage response;
-            //var values = new Dictionary<string, string>();
-            //values.Add("Username", username);
-            //values.Add("Password", password);
-            //var content = new FormUrlEncodedContent(values);
-            //AuthenticationResult result = AuthenticationResult.ConnectionFailed;
-            //try
-            //{
-            //    response = await httpClient.PostAsync("http://simkin.atwebpages.com/Login.php", content);
-            //    if (response.StatusCode == HttpStatusCode.OK)
-            //    {
-            //        string responseBody = await response.Content.ReadAsStringAsync();
-            //        if (responseBody == "true verifying")
-            //            result = AuthenticationResult.Ok;
-            //        else
-            //            result = AuthenticationResult.ParamsIncorrect;
-            //    }
-            //}
-            //catch
-            //{
-            //    result = AuthenticationResult.ConnectionFailed;
-            //}
+            HttpClient httpClient = new HttpClient();
+            HttpResponseMessage response;
+            var values = new Dictionary<string, string>();
+            values.Add("Username", username);
+            values.Add("Password", password);
+            var content = new FormUrlEncodedContent(values);
+            try
+            {
+                response = await httpClient.PostAsync("http://simkin.atwebpages.com/Login.php", content);
+            }
+            catch
+            {
+                return AuthenticationResult.ConnectionFailed;
+            }
+            if (response.StatusCode != HttpStatusCode.OK)
+                return AuthenticationResult.ConnectionFailed;
 
-            //if (result == AuthenticationResult.Ok)
-            //{
-            //    //GetUserInfoFromServer();
-            //    CurrentUser.Username = username;
-            //    CurrentUser.IsAdmin = true;
-            //}
-            //return result;
+            string responseBody = await response.Content.ReadAsStringAsync();
+
+            if (responseBody == "isuser")
+            {
+                CurrentUser.IsAdmin = false;
+            }
+            else if (responseBody == "isadmin")
+            {
+                CurrentUser.IsAdmin = true;
+            }
 
             CurrentUser.Username = username;
-            CurrentUser.IsAdmin = true;
             return AuthenticationResult.Ok;
         }
 

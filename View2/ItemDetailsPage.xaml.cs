@@ -48,13 +48,13 @@ namespace View
 
             this.defaultCoverImage.Source =
                 new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri($"ms-appx:///{defaultImageLocation}"));
-            if (item.CoverImage != null)
-            image.Source = new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri(item.CoverImage));
+            if (item.CoverImage != null && item.CoverImage != string.Empty)
+                image.Source = new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri(item.CoverImage));
             titleTxtBlk.Text = item.ItemName;
             GuidTxtBlk.Text = item.Guid.ToString();
             categoryTxtBlk.Text = category;
             subCategoryTxtBlk.Text = item.SubCategory;
-            dateTxtBlk.Text = item.Date.ToString("d");
+            dateTxtBlk.Text = ((DateTimeOffset)item.Date).ToString("d");
             avaliableСopiesTxtBlk.Text = (item.CopyNumber - item.BorrowedCopies).ToString();
         }
 

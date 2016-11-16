@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d" RequestedTheme="Light">
 
-    <Grid >
+    <Grid>
         <StackPanel Height="312" Margin="35,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="495">
             <StackPanel.Resources>
                 <Style TargetType="TextBlock">

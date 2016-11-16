@@ -14,6 +14,7 @@ namespace Presenter
         void SetUserName(string userName);
         void SetBooksListPage();
         void ClearTitle();
+        void ShowMessage(string str);
         int SetCounter { set; }
 
         event EventHandler<StringEventArgs> SearchTextChanged;
@@ -21,5 +22,6 @@ namespace Presenter
         event EventHandler BooksClicked;
         event EventHandler MyMagazinesClicked;
         event EventHandler MyBooksClicked;
+        event EventHandler Logout;
     }
 }

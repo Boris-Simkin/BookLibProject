@@ -34,6 +34,7 @@ namespace View
 
         Guid _newGuid = Guid.NewGuid();
 
+
         private void AddNewItemPage_Loaded(object sender, RoutedEventArgs e)
         {
             MainPresenter.AddNewItemPage = this;
@@ -65,13 +66,13 @@ namespace View
             //Is Book
             if (typeCombobox.SelectedIndex == 0)
             {
-                _newItem = new Book(itemNameTxtBox.Text, new Guid(GuidTxtBlk.Text), 
+                _newItem = new Book(itemNameTxtBox.Text, new Guid(GuidTxtBlk.Text),
                     (Book.BookCategory)categoryCombobox.SelectedItem, subCategoryTxtBox.Text);
             }
             //Is Magazine
             else
             {
-                _newItem = new Journal(itemNameTxtBox.Text, new Guid(GuidTxtBlk.Text), 
+                _newItem = new Journal(itemNameTxtBox.Text, new Guid(GuidTxtBlk.Text),
                     (Journal.JournalCategory)categoryCombobox.SelectedItem, subCategoryTxtBox.Text);
             }
 
@@ -81,25 +82,24 @@ namespace View
 
             if (Submit != null)
                 Submit(this, new ItemEventArgs(_newItem));
-            if (typeCombobox.SelectedIndex == 0)
-                Frame.Navigate(typeof(View.MessagePage), "Book is created.");
-            else
-                Frame.Navigate(typeof(View.MessagePage), "Magazine is created.");
+
+            //if (typeCombobox.SelectedIndex == 0)
+            //    Frame.Navigate(typeof(View.MessagePage), "Book is created.");
+            //else
+            //    Frame.Navigate(typeof(View.MessagePage), "Magazine is created.");
         }
 
         private void typeCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (typeCombobox.SelectedItem.ToString() == "Books")
             {
-                if (typeCombobox.SelectedItem.ToString() == "Books")
-                {
-                    categoryCombobox.ItemsSource = Enum.GetValues(typeof(Book.BookCategory));
-                    categoryCombobox.SelectedIndex = 0;
-                }
-                else
-                {
-                    categoryCombobox.ItemsSource = Enum.GetValues(typeof(Journal.JournalCategory));
-                    categoryCombobox.SelectedIndex = 0;
-                }
+                categoryCombobox.ItemsSource = Enum.GetValues(typeof(Book.BookCategory));
+                categoryCombobox.SelectedIndex = 0;
+            }
+            else
+            {
+                categoryCombobox.ItemsSource = Enum.GetValues(typeof(Journal.JournalCategory));
+                categoryCombobox.SelectedIndex = 0;
             }
         }
 

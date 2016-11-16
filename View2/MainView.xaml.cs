@@ -28,6 +28,7 @@ namespace View
     /// </summary>
     public sealed partial class MainView : Page, IMainView
     {
+        public event EventHandler Logout;
         public event EventHandler MagazinesClicked;
         public event EventHandler BooksClicked;
         public event EventHandler MyMagazinesClicked;
@@ -144,6 +145,8 @@ namespace View
             toolBarGrid.Visibility = Visibility.Collapsed;
             titleTxtBlk.Text = "Manage users";
             ClearCounter();
+            HideToolBar();
+            mainFrame.Navigate(typeof(ManageUsersPage));
         }
 
         public void SetUserName(string userName)
@@ -153,6 +156,9 @@ namespace View
 
         private void logoutTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
+            if (Logout != null)
+                Logout(this, EventArgs.Empty);
+
             Frame.Navigate(typeof(LoginView));
         }
 
@@ -184,5 +190,17 @@ namespace View
 
         }
 
+        private void searchByBtn_Click(object sender, RoutedEventArgs e)
+        {
+            HideToolBar();
+            ClearCounter();
+            titleTxtBlk.Text = "Advanced search";
+            mainFrame.Navigate(typeof(AdvancedSearchPage));
+        }
+
+        public void ShowMessage(string str)
+        {
+            mainFrame.Navigate(typeof(MessagePage), str);
+        }
     }
 }

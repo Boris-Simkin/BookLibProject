@@ -14,20 +14,20 @@ namespace Model
             _subCategory = subCategory;
         }
 
-        static Book()
-        {
-            SubCategoryDict = new Dictionary<BookCategory, List<string>>();
-        }
+        //static Book()
+        //{
+        //    SubCategoryDict = new Dictionary<BookCategory, List<string>>();
+        //}
 
-        void UpdateDictionary(string value)
-        {
-            //Adding the category key to the dictionary if it's not exist
-            if (!SubCategoryDict.ContainsKey(_category))
-                SubCategoryDict.Add(_category, new List<string>());
-            //Adding the sub category to the dictionary
-            SubCategoryDict[_category].Add(value);
-            _subCategory = value;
-        }
+        //void UpdateDictionary(string value)
+        //{
+        //    //Adding the category key to the dictionary if it's not exist
+        //    if (!SubCategoryDict.ContainsKey(_category))
+        //        SubCategoryDict.Add(_category, new List<string>());
+        //    //Adding the sub category to the dictionary
+        //    SubCategoryDict[_category].Add(value);
+        //    _subCategory = value;
+        //}
 
         public enum BookCategory
         {
@@ -38,19 +38,19 @@ namespace Model
             Poetry,
         }
 
-        BookCategory _category;
+        BookCategory? _category;
 
-        public BookCategory Category
+        public BookCategory? Category
         {
             get { return _category; }
             set
             {
-                UpdateDictionary(_subCategory);
+                //UpdateDictionary(_subCategory);
                 _category = value;
             }
         }
 
-        static Dictionary<BookCategory, List<string>> SubCategoryDict;
+       // static Dictionary<BookCategory, List<string>> SubCategoryDict;
 
         private string _subCategory;
 
@@ -59,7 +59,7 @@ namespace Model
             get { return _subCategory; }
             set
             {
-                UpdateDictionary(_subCategory);
+                //UpdateDictionary(_subCategory);
                 _subCategory = value;
             }
         }

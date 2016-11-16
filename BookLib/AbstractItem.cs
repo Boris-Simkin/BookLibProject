@@ -13,6 +13,7 @@ namespace Model
             ItemName = itemName;
             Guid = guid;
             CopyNumber = 1;
+            Date = new DateTimeOffset();
         }
 
         private string _itemName;
@@ -25,9 +26,9 @@ namespace Model
 
         public int BorrowedCopies { get; set; }
 
-        private DateTimeOffset _date;
+        private DateTimeOffset? _date;
 
-        public DateTimeOffset Date
+        public DateTimeOffset? Date
         {
             get { return _date; }
             set { _date = value; }

@@ -14,20 +14,20 @@ namespace Model
             _subCategory = subCategory;
         }
 
-        static Journal()
-        {
-            SubCategoryDict = new Dictionary<JournalCategory, List<string>>();
-        }
+        //static Journal()
+        //{
+        //    SubCategoryDict = new Dictionary<JournalCategory, List<string>>();
+        //}
 
-        void UpdateDictionary(string value)
-        {
-            //Adding the category key to the dictionary if it's not exist
-            if (!SubCategoryDict.ContainsKey(_category))
-                SubCategoryDict.Add(_category, new List<string>());
-            //Adding the sub category to the dictionary
-            SubCategoryDict[_category].Add(value);
-            _subCategory = value;
-        }
+        //void UpdateDictionary(string value)
+        //{
+        //    //Adding the category key to the dictionary if it's not exist
+        //    if (!SubCategoryDict.ContainsKey(_category))
+        //        SubCategoryDict.Add(_category, new List<string>());
+        //    //Adding the sub category to the dictionary
+        //    SubCategoryDict[_category].Add(value);
+        //    _subCategory = value;
+        //}
 
         public enum JournalCategory
         {
@@ -38,19 +38,19 @@ namespace Model
             Women,
         }
 
-        JournalCategory _category;
+        JournalCategory? _category;
 
-        public JournalCategory Category
+        public JournalCategory? Category
         {
             get { return _category; }
             set
             {
-                UpdateDictionary(_subCategory);
+              //  UpdateDictionary(_subCategory);
                 _category = value;
             }
         }
 
-        static Dictionary<JournalCategory, List<string>> SubCategoryDict;
+        //static Dictionary<JournalCategory, List<string>> SubCategoryDict;
 
         private string _subCategory;
 
@@ -59,7 +59,7 @@ namespace Model
             get { return _subCategory; }
             set
             {
-                UpdateDictionary(_subCategory);
+                //UpdateDictionary(_subCategory);
                 _subCategory = value;
             }
         }
