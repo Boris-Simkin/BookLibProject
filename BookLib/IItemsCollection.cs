@@ -10,6 +10,8 @@ namespace Model
     {
         Task<AuthenticationResult> LoadDataFromServer();
         Task<AuthenticationResult> AddItemToServer(AbstractItem item);
+        Task<AuthenticationResult> DeleteFromServer(AbstractItem item);
+        Task<AuthenticationResult> UpdateInServer(AbstractItem item);
         void AddItem(AbstractItem item);
         void UpdateItem(AbstractItem newitem);
         void DeleteItem(AbstractItem item);

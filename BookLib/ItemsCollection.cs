@@ -75,6 +75,83 @@ namespace Model
             _items.Clear();
         }
 
+
+
+        public async Task<AuthenticationResult> UpdateInServer(AbstractItem item)
+        {
+            HttpClient httpClient = new HttpClient();
+            HttpResponseMessage response;
+            AuthenticationResult result = AuthenticationResult.ConnectionFailed;
+
+            var values = new Dictionary<string, string>();
+            values.Add("BookName", item.ItemName);
+            values.Add("Date", ((DateTimeOffset)item.Date).ToString("d"));
+            values.Add("CopyNumber", item.CopyNumber.ToString());
+            values.Add("Guid", item.Guid.ToString());
+            //send the url encrypted
+            values.Add("CoverImage", Crypt.Encrypt("boris", item.CoverImage));
+            if (item is Book)
+                values.Add("Category", ((Book)item).Category.ToString());
+            else
+                values.Add("Category", ((Journal)item).Category.ToString());
+            values.Add("SubCategory", item.SubCategory);
+            values.Add("BorrowedCopies", item.BorrowedCopies.ToString());
+
+            var content = new FormUrlEncodedContent(values);
+
+            try
+            {
+                response = await httpClient.PostAsync("http://simkin.atwebpages.com/UpdateBook.php", content);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    if (responseBody == "updated")
+                        result = AuthenticationResult.Ok;
+                }
+                else
+                    result = AuthenticationResult.ConnectionFailed;
+            }
+            catch
+            {
+                result = AuthenticationResult.ConnectionFailed;
+            }
+            return result;
+        }
+
+
+        public async Task<AuthenticationResult> DeleteFromServer(AbstractItem item)
+        {
+            HttpClient httpClient = new HttpClient();
+            HttpResponseMessage response;
+            AuthenticationResult result = AuthenticationResult.ConnectionFailed;
+
+            var values = new Dictionary<string, string>();
+            values.Add("Guid", item.Guid.ToString());
+
+            var content = new FormUrlEncodedContent(values);
+
+            try
+            {
+                response = await httpClient.PostAsync("http://simkin.atwebpages.com/DeleteBook.php", content);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    if (responseBody == "deleted")
+                        result = AuthenticationResult.Ok;
+                }
+                else
+                    result = AuthenticationResult.ConnectionFailed;
+            }
+            catch
+            {
+                result = AuthenticationResult.ConnectionFailed;
+            }
+            return result;
+        }
+
+
+
+
         public async Task<AuthenticationResult> AddItemToServer(AbstractItem item)
         {
             HttpClient httpClient = new HttpClient();
@@ -86,7 +163,8 @@ namespace Model
             values.Add("Date", ((DateTimeOffset)item.Date).ToString("d"));
             values.Add("CopyNumber", item.CopyNumber.ToString());
             values.Add("Guid", item.Guid.ToString());
-            values.Add("CoverImage", item.CoverImage);
+            //send the url encrypted
+            values.Add("CoverImage", Crypt.Encrypt("boris", item.CoverImage));
             if (item is Book)
                 values.Add("Category", ((Book)item).Category.ToString());
             else
@@ -101,7 +179,6 @@ namespace Model
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
-                    Debug.WriteLine(responseBody);
                     if (responseBody == "created")
                         result = AuthenticationResult.Ok;
                 }
@@ -123,42 +200,40 @@ namespace Model
             HttpClient httpClient = new HttpClient();
             HttpResponseMessage response;
 
-            //AuthenticationResult result = AuthenticationResult.Ok;
             string responseBody = string.Empty;
             try
             {
                 response = await httpClient.GetAsync("http://simkin.atwebpages.com/GetBooks.php");
                 if (response.StatusCode == HttpStatusCode.OK)
                     responseBody = await response.Content.ReadAsStringAsync();
+                else
+                    return AuthenticationResult.ConnectionFailed;
             }
             catch
             {
                 return AuthenticationResult.ConnectionFailed;
             }
 
-
             string[] words = responseBody.Split('^');
             for (int i = 0; i < (words.Length - 8); i += 8)
             {
-                Debug.WriteLine("i: " + i);
                 AbstractItem newItem;
                 Book.BookCategory bookCategory;
                 Journal.JournalCategory journalCategory;
                 //Trying parse the category to book or journal
                 bool isbook = Enum.TryParse(words[i + 5], out bookCategory);
-                Enum.TryParse(words[5], out journalCategory);
+                Enum.TryParse(words[i + 5], out journalCategory);
 
                 if (isbook)
                     newItem = new Book(words[i + 0], new Guid(words[i + 3]), bookCategory, words[i + 6]);
                 else
                     newItem = new Journal(words[i + 0], new Guid(words[i + 3]), journalCategory, words[i + 6]);
 
-                Debug.WriteLine(words[i + 1]);
-                Debug.WriteLine(words[i + 1]);
                 newItem.Date = DateTimeOffset.Parse(words[i + 1], CultureInfo.InvariantCulture);
 
+                //Decrypt the url
+                newItem.CoverImage = Crypt.Decrypt("boris", words[i + 4]);
 
-                newItem.CoverImage = words[i + 4];
                 newItem.CopyNumber = int.Parse(words[i + 2]);
                 newItem.BorrowedCopies = int.Parse(words[i + 7]);
                 _items.Add(newItem);

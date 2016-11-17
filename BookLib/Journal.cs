@@ -31,11 +31,17 @@ namespace Model
 
         public enum JournalCategory
         {
-            None,
+            Magazine,
             Traveling,
             Sport,
             Men,
             Women,
+            Business,
+            Law,
+            Cars,
+            Comics,
+            Gardening,
+            Culinar
         }
 
         JournalCategory? _category;

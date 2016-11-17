@@ -31,11 +31,18 @@ namespace Model
 
         public enum BookCategory
         {
-            None,
+            Book,
             Fiction,
+            Adventure,
             Studying,
             Religion,
             Poetry,
+            Romance,
+            Novel,
+            Horror,
+            Biographies,
+            Diaries,
+            Satire
         }
 
         BookCategory? _category;

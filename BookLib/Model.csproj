@@ -107,6 +107,7 @@
     <Compile Include="AbstractItem.cs" />
     <Compile Include="Book.cs" />
     <Compile Include="Category.cs" />
+    <Compile Include="Crypt.cs" />
     <Compile Include="IItemsCollection.cs" />
     <Compile Include="IUsers.cs" />
     <Compile Include="ItemsCollection.cs" />

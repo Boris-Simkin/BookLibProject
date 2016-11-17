@@ -105,10 +105,10 @@ namespace View
         {
             if (Delete != null)
                 Delete(this, new ItemEventArgs(_item));
-            if (_item is Book)
-                Frame.Navigate(typeof(View.MessagePage), "Book is deleted.");
-            else
-                Frame.Navigate(typeof(View.MessagePage), "Magazine is deleted.");
+            //if (_item is Book)
+            //    Frame.Navigate(typeof(View.MessagePage), "Book is deleted.");
+            //else
+            //    Frame.Navigate(typeof(View.MessagePage), "Magazine is deleted.");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

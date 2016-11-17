@@ -33,6 +33,7 @@ namespace View
         public event EventHandler BooksClicked;
         public event EventHandler MyMagazinesClicked;
         public event EventHandler MyBooksClicked;
+        public event EventHandler ManageUsersClicked;
         public event EventHandler<StringEventArgs> SearchTextChanged;
 
         public int SetCounter { set { itemCountTxtBlk.Text = value.ToString(); } }
@@ -147,6 +148,10 @@ namespace View
             ClearCounter();
             HideToolBar();
             mainFrame.Navigate(typeof(ManageUsersPage));
+
+            if (ManageUsersClicked != null)
+                ManageUsersClicked(this, EventArgs.Empty);
+ 
         }
 
         public void SetUserName(string userName)

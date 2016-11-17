@@ -1,4 +1,5 @@
-﻿using Presenter;
+﻿using Model;
+using Presenter;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,16 +24,37 @@ namespace View
     /// </summary>
     public sealed partial class ManageUsersPage : Page, IManageUsers
     {
+        public event EventHandler<SubmitEventArgs> MakeAdmin;
+        public event EventHandler<SubmitEventArgs> DeleteUser;
+
         public ManageUsersPage()
         {
             this.InitializeComponent();
             this.Loaded += ManageUsersPage_Loaded;
         }
 
-        private void ManageUsersPage_Loaded(object sender, RoutedEventArgs e)
+        public List<User> SourceList
         {
-            //MainPresenter.ManageUsersPage = this;
+            get { return (List<User>)usersListView.ItemsSource; }
+            set { usersListView.ItemsSource = value; }
         }
 
+        private void ManageUsersPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            MainPresenter.ManageUsersPage = this;
+           // usersListView.ItemsSource =;
+        }
+
+        private void deleteUserBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //if (DeleteUser != null)
+            //    DeleteUser(this, new SubmitEventArgs());
+        }
+
+        private void makeAdminBtn_Click(object sender, RoutedEventArgs e)
+        {
+            //if (MakeAdmin != null)
+            //    MakeAdmin(this, new SubmitEventArgs());
+        }
     }
 }

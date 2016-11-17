@@ -31,8 +31,7 @@ namespace View
         private void submitBtn_Click(object sender, RoutedEventArgs e)
         {
             Frame.Navigate(typeof(View.LoginView));
-            //if (GoBack != null)
-            //    GoBack(this, EventArgs.Empty);
+
         }
     }
 }

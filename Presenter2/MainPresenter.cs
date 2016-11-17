@@ -20,6 +20,31 @@ namespace Presenter
         private static IAddNewItemPage _addNewItemPage;
         private static IAdvancedSearchPage _advancedSearchPage;
         private static IMessagePage _messagePage;
+        private static IManageUsers _manageUsers;
+
+        public static IManageUsers ManageUsersPage
+        {
+            get
+            {
+                return _manageUsers;
+            }
+            set
+            {
+                _manageUsers = value;
+                _manageUsers.DeleteUser += _manageUsers_DeleteUser;
+                _manageUsers.MakeAdmin += _manageUsers_MakeAdmin;
+            }
+        }
+
+        private static void _manageUsers_MakeAdmin(object sender, SubmitEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static void _manageUsers_DeleteUser(object sender, SubmitEventArgs e)
+        {
+            throw new NotImplementedException();
+        }
 
         public static IAdvancedSearchPage AdvancedSearchPage
         {
@@ -77,14 +102,40 @@ namespace Presenter
             }
         }
 
-        private static void _itemDetailsPageAdmin_Delete(object sender, ItemEventArgs e)
+        private static async void _itemDetailsPageAdmin_Delete(object sender, ItemEventArgs e)
         {
-            _itemsCollection.DeleteItem(e.Item);
+            AuthenticationResult result = await _itemsCollection.DeleteFromServer(e.Item);
+
+            if (result == AuthenticationResult.Ok)
+            {
+                var temp = e.Item;
+                _itemsCollection.DeleteItem(e.Item);
+
+                if (temp is Book)
+                    _mainView.ShowMessage("Book is deleted.");
+                else
+                    _mainView.ShowMessage("Magazine is deleted.");
+            }
+            else
+                _mainView.ShowMessage("Connection failed");
         }
 
-        private static void _itemDetailsPageAdmin_Submit(object sender, ItemEventArgs e)
+        private static async void _itemDetailsPageAdmin_Submit(object sender, ItemEventArgs e)
         {
-            _itemsCollection.UpdateItem(e.Item);
+            AuthenticationResult result = await _itemsCollection.UpdateInServer(e.Item);
+
+            if (result == AuthenticationResult.Ok)
+            {
+                _itemsCollection.UpdateItem(e.Item);
+
+                if (e.Item is Book)
+                    _mainView.ShowMessage("Book updated.");
+                else
+                    _mainView.ShowMessage("Magazine updated.");
+
+            }
+            else
+                _mainView.ShowMessage("Connection failed");
         }
 
         public static IItemListPage ItemListPage
@@ -138,7 +189,11 @@ namespace Presenter
             if (result == AuthenticationResult.Ok)
             {
                 _itemsCollection.AddItem(e.Item);
-                _mainView.ShowMessage("Item created");
+
+                if (e.Item is Book)
+                    _mainView.ShowMessage("Book created.");
+                else
+                    _mainView.ShowMessage("Magazine created.");
             }
             else
                 _mainView.ShowMessage("Connection failed");
@@ -232,7 +287,25 @@ namespace Presenter
                 _mainView.MyBooksClicked += _mainView_MyBooksClicked;
                 _mainView.MyMagazinesClicked += _mainView_MyMagazinesClicked;
                 _mainView.SearchTextChanged += _mainView_SearchTextChanged;
+                _mainView.ManageUsersClicked += _mainView_ManageUsersClicked;
                 _mainView.Logout += _mainView_Logout;
+            }
+        }
+
+        private static async void _mainView_ManageUsersClicked(object sender, EventArgs e)
+        {
+            Task<AuthenticationResult> task = _user.GetUsersFromServer();
+
+            switch (await task)
+            {
+                case AuthenticationResult.Ok:
+                    ManageUsersPage.SourceList = _user.GetUsers();
+                    break;
+                case AuthenticationResult.ConnectionFailed:
+                    //LoginView.StringFromServer = "Error connecting to the server";
+                    break;
+                default:
+                    break;
             }
         }
 
@@ -293,9 +366,14 @@ namespace Presenter
             switch (await task)
             {
                 case AuthenticationResult.Ok:
-                    await _itemsCollection.LoadDataFromServer();
-                    LoginView.SetMainView();
-                    _mainView.SetUserName(e.Username);
+                    var result = await _itemsCollection.LoadDataFromServer();
+                    if (result == AuthenticationResult.Ok)
+                    {
+                        LoginView.SetMainView();
+                        _mainView.SetUserName(e.Username);
+                    }
+                    else
+                        LoginView.StringFromServer = "Could not connect to server db";
                     break;
                 case AuthenticationResult.ParamsIncorrect:
                     LoginView.StringFromServer = "Incorrect username or password";
@@ -307,6 +385,7 @@ namespace Presenter
                     break;
             }
         }
+
 
         private async static void requestSubmit(string username, string password)
         {

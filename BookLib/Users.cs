@@ -34,9 +34,40 @@ namespace Model
 
         public User CurrentUser { get; set; }
 
-        private async void GetUserInfoFromServer()
+        public async Task<AuthenticationResult> GetUsersFromServer()
         {
+            HttpClient httpClient = new HttpClient();
+            HttpResponseMessage response;
 
+            string responseBody = string.Empty;
+            try
+            {
+                response = await httpClient.GetAsync("http://simkin.atwebpages.com/GetUsers.php");
+                if (response.StatusCode == HttpStatusCode.OK)
+                    responseBody = await response.Content.ReadAsStringAsync();
+                else
+                    return AuthenticationResult.ConnectionFailed;
+            }
+            catch
+            {
+                return AuthenticationResult.ConnectionFailed;
+            }
+
+            string[] words = responseBody.Split('^');
+            for (int i = 0; i < (words.Length - 4); i += 4)
+            {
+                User newUser = new User();
+                newUser.Username = words[0 + i];
+                newUser.FirstName = words[1 + i];
+                newUser.LastName = words[2 + i];
+                if (words[3 + i] == "1")
+                    newUser.IsAdmin = true;
+                else
+                    newUser.IsAdmin = false;
+                _users.Add(newUser);
+
+            }
+            return AuthenticationResult.Ok;
         }
 
         public async Task<AuthenticationResult> Authentication(string username, string password)
@@ -59,6 +90,9 @@ namespace Model
                 return AuthenticationResult.ConnectionFailed;
 
             string responseBody = await response.Content.ReadAsStringAsync();
+
+            if (responseBody != "isuser" && responseBody != "isadmin")
+                return AuthenticationResult.ParamsIncorrect;
 
             if (responseBody == "isuser")
             {
