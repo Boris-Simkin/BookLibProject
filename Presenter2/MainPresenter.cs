@@ -12,14 +12,13 @@ namespace Presenter
     static public class MainPresenter
     {
         private static readonly IItemsCollection _itemsCollection;
-        private static Users _user = new Users();
+        private static Users _users = new Users();
 
         private static IItemDetailsPage _itemDetailsPage;
         private static IItemListPage _itemListPage;
         private static IItemDetailsPageAdmin _itemDetailsPageAdmin;
         private static IAddNewItemPage _addNewItemPage;
         private static IAdvancedSearchPage _advancedSearchPage;
-        private static IMessagePage _messagePage;
         private static IManageUsers _manageUsers;
 
         public static IManageUsers ManageUsersPage
@@ -33,17 +32,40 @@ namespace Presenter
                 _manageUsers = value;
                 _manageUsers.DeleteUser += _manageUsers_DeleteUser;
                 _manageUsers.MakeAdmin += _manageUsers_MakeAdmin;
+                _manageUsers.PageLoaded += _manageUsers_PageLoaded;
             }
         }
 
-        private static void _manageUsers_MakeAdmin(object sender, SubmitEventArgs e)
+        private static void _manageUsers_PageLoaded(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            //Loading users except the administrators
+            var regularUsers = _users.GetUsers().Where(user => user.IsAdmin == false);
+            ManageUsersPage.SourceList = new List<User>(regularUsers);
         }
 
-        private static void _manageUsers_DeleteUser(object sender, SubmitEventArgs e)
+        private async static void _manageUsers_MakeAdmin(object sender, UserEventArgs e)
         {
-            throw new NotImplementedException();
+            Task<ResultFromServer> task = _users.MakeUserAdmin(e.User);
+
+            if (await task == ResultFromServer.Ok)
+                _users.GetUsers().Remove(e.User);
+            else
+                _mainView.ShowMessage("Connection failed");
+
+            ManageUsersPage.RequestFinished();
+        }
+
+        private async static void _manageUsers_DeleteUser(object sender, UserEventArgs e)
+        {
+            Task<ResultFromServer> task = _users.RemoveUserFromServer(e.User);
+
+            if (await task == ResultFromServer.Ok)
+                _users.GetUsers().Remove(e.User);
+                
+            else
+                _mainView.ShowMessage("Connection failed");
+
+            ManageUsersPage.RequestFinished();
         }
 
         public static IAdvancedSearchPage AdvancedSearchPage
@@ -64,28 +86,8 @@ namespace Presenter
             List<AbstractItem> result = _itemsCollection.AdvancedSearch(e.Item);
 
             _itemListPage.SourceList = result;
-            //if (_itemListPage.IsBookList)
-            //    _itemListPage.SourceList = result;
-            //else
-            //    _itemListPage.SourceList = result;
-        }
-
-        public static IMessagePage MessagePage
-        {
-            get
-            {
-                return _messagePage;
-            }
-            set
-            {
-                _messagePage = value;
-                _messagePage.ButtonPressed += _messagePage_ButtonPressed;
-            }
-        }
-
-        private static void _messagePage_ButtonPressed(object sender, EventArgs e)
-        {
-            _mainView.SetBooksListPage();
+            _mainView.SetTitle("Result");
+            _mainView.SetCounter = result.Count;
         }
 
         public static IItemDetailsPageAdmin ItemDetailsPageAdmin
@@ -97,34 +99,33 @@ namespace Presenter
             set
             {
                 _itemDetailsPageAdmin = value;
-                _itemDetailsPageAdmin.Save += _itemDetailsPageAdmin_Submit;
+                _itemDetailsPageAdmin.Save += _itemDetailsPageAdmin_UpdateItem;
                 _itemDetailsPageAdmin.Delete += _itemDetailsPageAdmin_Delete;
             }
         }
 
         private static async void _itemDetailsPageAdmin_Delete(object sender, ItemEventArgs e)
         {
-            AuthenticationResult result = await _itemsCollection.DeleteFromServer(e.Item);
+            ResultFromServer result = await _itemsCollection.DeleteFromServer(e.Item);
 
-            if (result == AuthenticationResult.Ok)
+            if (result == ResultFromServer.Ok)
             {
                 var temp = e.Item;
                 _itemsCollection.DeleteItem(e.Item);
-
-                if (temp is Book)
-                    _mainView.ShowMessage("Book is deleted.");
+                if (e.Item is Book)
+                    _mainView.SetBooksListPage();
                 else
-                    _mainView.ShowMessage("Magazine is deleted.");
+                    _mainView.SetMagazinesListPage();
             }
             else
                 _mainView.ShowMessage("Connection failed");
         }
 
-        private static async void _itemDetailsPageAdmin_Submit(object sender, ItemEventArgs e)
+        private static async void _itemDetailsPageAdmin_UpdateItem(object sender, ItemEventArgs e)
         {
-            AuthenticationResult result = await _itemsCollection.UpdateInServer(e.Item);
+            ResultFromServer result = await _itemsCollection.UpdateInServer(e.Item);
 
-            if (result == AuthenticationResult.Ok)
+            if (result == ResultFromServer.Ok)
             {
                 _itemsCollection.UpdateItem(e.Item);
 
@@ -155,7 +156,7 @@ namespace Presenter
         {
             _mainView.HideToolBar();
             _mainView.ClearTitle();
-            if (_user.CurrentUser.IsAdmin)
+            if (_users.CurrentUser.IsAdmin)
             {
                 _itemListPage.SetItemDetailsPage(true);
                 _itemDetailsPageAdmin.SetContent(e.Item);
@@ -184,16 +185,22 @@ namespace Presenter
 
         private async static void AddNewItemPage_Submit(object sender, ItemEventArgs e)
         {
-            AuthenticationResult result = await _itemsCollection.AddItemToServer(e.Item);
+            ResultFromServer result = await _itemsCollection.AddItemToServer(e.Item);
 
-            if (result == AuthenticationResult.Ok)
+            if (result == ResultFromServer.Ok)
             {
                 _itemsCollection.AddItem(e.Item);
 
                 if (e.Item is Book)
+                {
                     _mainView.ShowMessage("Book created.");
+                    _mainView.SetBooksListPage();
+                }
                 else
+                {
                     _mainView.ShowMessage("Magazine created.");
+                    _mainView.SetMagazinesListPage();
+                }
             }
             else
                 _mainView.ShowMessage("Connection failed");
@@ -227,23 +234,25 @@ namespace Presenter
             }
         }
 
-        private async static void _registerView_Submit(object sender, SubmitEventArgs e)
+        private async static void _registerView_Submit(object sender, UserEventArgs e)
         {
-            Task<AuthenticationResult> task = _user.Registration(e.Username, e.Password, e.Firstname, e.Lastname);
+            Task<ResultFromServer> task = _users.Registration(e.User);
             switch (await task)
             {
-                case AuthenticationResult.Ok:
-                    _registerView.SetLoginCreatedPage();
+                case ResultFromServer.Ok:
+                    _registerView.ShowMessage("Your account was successfully created!");
+                    _registerView.SetPreviusView();
                     break;
-                case AuthenticationResult.ParamsIncorrect:
+                case ResultFromServer.ParamsIncorrect:
                     _registerView.StringFromServer = "This username already in use";
                     break;
-                case AuthenticationResult.ConnectionFailed:
+                case ResultFromServer.ConnectionFailed:
                     _registerView.StringFromServer = "Error connecting to the server";
                     break;
                 default:
                     break;
             }
+            _registerView.RequestFinished();
         }
 
         private static void _registerView_GoBack(object sender, EventArgs e)
@@ -281,7 +290,7 @@ namespace Presenter
             set
             {
                 _mainView = value;
-                _mainView.IsAdmin(_user.CurrentUser.IsAdmin);
+                _mainView.IsAdmin(_users.CurrentUser.IsAdmin);
                 _mainView.BooksClicked += _mainView_BooksClicked;
                 _mainView.MagazinesClicked += _mainView_MagazinesClicked;
                 _mainView.MyBooksClicked += _mainView_MyBooksClicked;
@@ -292,27 +301,18 @@ namespace Presenter
             }
         }
 
-        private static async void _mainView_ManageUsersClicked(object sender, EventArgs e)
+        private static void _mainView_ManageUsersClicked(object sender, EventArgs e)
         {
-            Task<AuthenticationResult> task = _user.GetUsersFromServer();
-
-            switch (await task)
-            {
-                case AuthenticationResult.Ok:
-                    ManageUsersPage.SourceList = _user.GetUsers();
-                    break;
-                case AuthenticationResult.ConnectionFailed:
-                    //LoginView.StringFromServer = "Error connecting to the server";
-                    break;
-                default:
-                    break;
-            }
+            //await Task.Delay(TimeSpan.FromSeconds(30));
+            //ManageUsersPage.SourceList = _user.GetUsers();
         }
+
 
         private static void _mainView_Logout(object sender, EventArgs e)
         {
             _loginView.Submit -= _loginView_Submit;
             _itemsCollection.ClearList();
+            _users.ClearList();
         }
 
         private static void _mainView_SearchTextChanged(object sender, StringEventArgs e)
@@ -359,33 +359,49 @@ namespace Presenter
         }
 
 
-        private async static void _loginView_Submit(object sender, SubmitEventArgs e)
+        private async static void _loginView_Submit(object sender, UserEventArgs e)
         {
-            Task<AuthenticationResult> task = _user.Authentication(e.Username, e.Password);
+            Task<ResultFromServer> task = _users.Authentication(e.User);
 
             switch (await task)
             {
-                case AuthenticationResult.Ok:
+                case ResultFromServer.Ok:
+
                     var result = await _itemsCollection.LoadDataFromServer();
-                    if (result == AuthenticationResult.Ok)
+                    if (result == ResultFromServer.Ok)
                     {
-                        LoginView.SetMainView();
-                        _mainView.SetUserName(e.Username);
+                        if (!_users.CurrentUser.IsAdmin)
+                        {
+                            LoginView.SetMainView();
+                            _mainView.SetUserName(e.User.Username);
+                        }
+                        else
+                        {
+                            Task<ResultFromServer> task2 = _users.GetUsersFromServer();
+                            if (await task2 == ResultFromServer.Ok)
+                            {
+                                LoginView.SetMainView();
+                                _mainView.SetUserName(_users.CurrentUser.Username);
+                            }
+                            else
+                                LoginView.StringFromServer = "Error retriving users from server";
+                        }
                     }
                     else
                         LoginView.StringFromServer = "Could not connect to server db";
                     break;
-                case AuthenticationResult.ParamsIncorrect:
+                case ResultFromServer.ParamsIncorrect:
                     LoginView.StringFromServer = "Incorrect username or password";
                     break;
-                case AuthenticationResult.ConnectionFailed:
+                case ResultFromServer.ConnectionFailed:
                     LoginView.StringFromServer = "Error connecting to the server";
                     break;
                 default:
                     break;
             }
-        }
 
+            LoginView.RequestFinished();
+        }
 
         private async static void requestSubmit(string username, string password)
         {

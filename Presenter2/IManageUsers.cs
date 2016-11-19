@@ -9,8 +9,10 @@ namespace Presenter
 {
     public interface IManageUsers
     {
-        event EventHandler<SubmitEventArgs> MakeAdmin;
-        event EventHandler<SubmitEventArgs> DeleteUser;
-        List<User> SourceList { get; set; }
+        event EventHandler<UserEventArgs> MakeAdmin;
+        event EventHandler<UserEventArgs> DeleteUser;
+        event EventHandler PageLoaded;
+        List<User> SourceList { set; }
+        void RequestFinished();
     }
 }

@@ -9,32 +9,93 @@ using System.Threading.Tasks;
 
 namespace Model
 {
-    public enum AuthenticationResult
-    {
-        ConnectionFailed,
-        ParamsIncorrect,
-        Ok,
-    }
-
-    public class Users : IUsers
+    public class Users
     {
         public Users()
         {
             CurrentUser = new User();
         }
-        //public string CurrentUserName { get; set; }
-        public AuthenticationResult CurrentUserType { get; set; }
 
-        public List<User> _users = new List<User>();
+        private List<User> _users = new List<User>();
 
         public List<User> GetUsers()
         {
             return _users;
         }
 
+        public void ClearList()
+        {
+            _users.Clear();
+        }
+
         public User CurrentUser { get; set; }
 
-        public async Task<AuthenticationResult> GetUsersFromServer()
+
+        public async Task<ResultFromServer> MakeUserAdmin(User user)
+        {
+
+            HttpClient httpClient = new HttpClient();
+            HttpResponseMessage response;
+            var values = new Dictionary<string, string>();
+            values.Add("Username", user.Username);
+
+            var content = new FormUrlEncodedContent(values);
+            ResultFromServer result = ResultFromServer.ConnectionFailed;
+            try
+            {
+                response = await httpClient.PostAsync("http://simkin.atwebpages.com/MakeMeAdmin.php", content);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    if (responseBody == "ok")
+                        result = ResultFromServer.Ok;
+                    else
+                        result = ResultFromServer.ParamsIncorrect;
+                }
+            }
+            catch
+            {
+                result = ResultFromServer.ConnectionFailed;
+            }
+            return result;
+        }
+
+
+
+        public async Task<ResultFromServer> RemoveUserFromServer(User user)
+        {
+            if (user.IsAdmin)
+                throw new ArgumentException("Cannot remove administrator user.");
+            
+            HttpClient httpClient = new HttpClient();
+            HttpResponseMessage response;
+            var values = new Dictionary<string, string>();
+            values.Add("Username", user.Username);
+
+            var content = new FormUrlEncodedContent(values);
+            ResultFromServer result = ResultFromServer.ConnectionFailed;
+            try
+            {
+                response = await httpClient.PostAsync("http://simkin.atwebpages.com/RemoveUser.php", content);
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    string responseBody = await response.Content.ReadAsStringAsync();
+                    if (responseBody == "ok")
+                        result = ResultFromServer.Ok;
+                    else
+                        result = ResultFromServer.ParamsIncorrect;
+                }
+            }
+            catch
+            {
+                result = ResultFromServer.ConnectionFailed;
+            }
+            return result;
+        }
+
+
+
+        public async Task<ResultFromServer> GetUsersFromServer()
         {
             HttpClient httpClient = new HttpClient();
             HttpResponseMessage response;
@@ -46,11 +107,11 @@ namespace Model
                 if (response.StatusCode == HttpStatusCode.OK)
                     responseBody = await response.Content.ReadAsStringAsync();
                 else
-                    return AuthenticationResult.ConnectionFailed;
+                    return ResultFromServer.ConnectionFailed;
             }
             catch
             {
-                return AuthenticationResult.ConnectionFailed;
+                return ResultFromServer.ConnectionFailed;
             }
 
             string[] words = responseBody.Split('^');
@@ -67,16 +128,16 @@ namespace Model
                 _users.Add(newUser);
 
             }
-            return AuthenticationResult.Ok;
+            return ResultFromServer.Ok;
         }
 
-        public async Task<AuthenticationResult> Authentication(string username, string password)
+        public async Task<ResultFromServer> Authentication(User user)
         {
             HttpClient httpClient = new HttpClient();
             HttpResponseMessage response;
             var values = new Dictionary<string, string>();
-            values.Add("Username", username);
-            values.Add("Password", password);
+            values.Add("Username", user.Username);
+            values.Add("Password", user.Password);
             var content = new FormUrlEncodedContent(values);
             try
             {
@@ -84,15 +145,15 @@ namespace Model
             }
             catch
             {
-                return AuthenticationResult.ConnectionFailed;
+                return ResultFromServer.ConnectionFailed;
             }
             if (response.StatusCode != HttpStatusCode.OK)
-                return AuthenticationResult.ConnectionFailed;
+                return ResultFromServer.ConnectionFailed;
 
             string responseBody = await response.Content.ReadAsStringAsync();
 
             if (responseBody != "isuser" && responseBody != "isadmin")
-                return AuthenticationResult.ParamsIncorrect;
+                return ResultFromServer.ParamsIncorrect;
 
             if (responseBody == "isuser")
             {
@@ -103,22 +164,22 @@ namespace Model
                 CurrentUser.IsAdmin = true;
             }
 
-            CurrentUser.Username = username;
-            return AuthenticationResult.Ok;
+            CurrentUser.Username = user.Username;
+            return ResultFromServer.Ok;
         }
 
-        public async Task<AuthenticationResult> Registration(string username, string password, string firstName, string lastName)
+        public async Task<ResultFromServer> Registration(User user)
         {
-
+            //string username = user.Username;
             HttpClient httpClient = new HttpClient();
             HttpResponseMessage response;
             var values = new Dictionary<string, string>();
-            values.Add("Username", username);
-            values.Add("FName", firstName);
-            values.Add("LName", lastName);
-            values.Add("Password", password);
+            values.Add("Username", user.Username);
+            values.Add("FName", user.FirstName);
+            values.Add("LName", user.LastName);
+            values.Add("Password", user.Password);
             var content = new FormUrlEncodedContent(values);
-            AuthenticationResult result = AuthenticationResult.ConnectionFailed;
+            ResultFromServer result = ResultFromServer.ConnectionFailed;
             try
             {
                 response = await httpClient.PostAsync("http://simkin.atwebpages.com/SignIn.php", content);
@@ -126,14 +187,14 @@ namespace Model
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
                     if (responseBody == "created")
-                        result = AuthenticationResult.Ok;
+                        result = ResultFromServer.Ok;
                     else
-                        result = AuthenticationResult.ParamsIncorrect;
+                        result = ResultFromServer.ParamsIncorrect;
                 }
             }
             catch
             {
-                result = AuthenticationResult.ConnectionFailed;
+                result = ResultFromServer.ConnectionFailed;
             }
             return result;
         }

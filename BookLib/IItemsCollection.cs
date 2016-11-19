@@ -8,10 +8,10 @@ namespace Model
 {
     public interface IItemsCollection
     {
-        Task<AuthenticationResult> LoadDataFromServer();
-        Task<AuthenticationResult> AddItemToServer(AbstractItem item);
-        Task<AuthenticationResult> DeleteFromServer(AbstractItem item);
-        Task<AuthenticationResult> UpdateInServer(AbstractItem item);
+        Task<ResultFromServer> LoadDataFromServer();
+        Task<ResultFromServer> AddItemToServer(AbstractItem item);
+        Task<ResultFromServer> DeleteFromServer(AbstractItem item);
+        Task<ResultFromServer> UpdateInServer(AbstractItem item);
         void AddItem(AbstractItem item);
         void UpdateItem(AbstractItem newitem);
         void DeleteItem(AbstractItem item);

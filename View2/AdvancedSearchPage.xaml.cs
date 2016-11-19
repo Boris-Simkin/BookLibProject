@@ -57,22 +57,6 @@ namespace View
             searchBtn.IsEnabled = satisfyConditions();
         }
 
-        private void typeCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            //if (typeCombobox.SelectedItem.ToString() == "Books")
-            {
-                categoryCombobox.ItemsSource = Enum.GetValues(typeof(Book.BookCategory));
-                categoryCombobox.SelectedIndex = 0;
-            }
-         //   else
-            {
-                categoryCombobox.ItemsSource = Enum.GetValues(typeof(Journal.JournalCategory));
-                categoryCombobox.SelectedIndex = 0;
-            }
-        }
-
-
-
         private void searchBtn_Click(object sender, RoutedEventArgs e)
         {
 
@@ -84,14 +68,14 @@ namespace View
                 if (categoryCheckBox.IsChecked == false)
                     ((Book)_item).Category = null;
             }
-            //Is Magazine
-          //  else
-            {
-                _item = new Journal(itemNameTxtBox.Text, new Guid(),
-                    (Journal.JournalCategory)categoryCombobox.SelectedItem, subCategoryTxtBox.Text);
-                if (categoryCheckBox.IsChecked == false)
-                    ((Journal)_item).Category = null;
-            }
+          //  //Is Magazine
+          ////  else
+          //  {
+          //      _item = new Journal(itemNameTxtBox.Text, new Guid(),
+          //          (Journal.JournalCategory)categoryCombobox.SelectedItem, subCategoryTxtBox.Text);
+          //      if (categoryCheckBox.IsChecked == false)
+          //          ((Journal)_item).Category = null;
+          //  }
 
             if (dateCheckBox.IsChecked == true)
                 _item.Date = datePicker.Date;
@@ -99,9 +83,8 @@ namespace View
 
             if (itemNameTxtBox.Text == string.Empty || itemNameCheckBox.IsChecked == false)
                 _item.ItemName = null;
-            
 
-
+            Frame.Navigate(typeof(ItemListPage));
 
 
             if (Submit != null)

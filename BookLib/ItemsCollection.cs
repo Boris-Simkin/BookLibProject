@@ -38,15 +38,23 @@ namespace Model
         public List<AbstractItem> SearchByName(bool IsBook, string itemName)
         {
             if (IsBook)
-                return new List<AbstractItem>(_items.Where(p => p.ItemName.Contains(itemName) && p is Book));
+                return new List<AbstractItem>(_items.Where(p => p.ItemName.ToLower().Contains(itemName.ToLower()) && p is Book));
             else
-                return new List<AbstractItem>(_items.Where(p => p.ItemName.Contains(itemName) && p is Journal));
+                return new List<AbstractItem>(_items.Where(p => p.ItemName.ToLower().Contains(itemName.ToLower()) && p is Journal));
 
         }
 
         public List<AbstractItem> AdvancedSearch(AbstractItem item)
         {
-            throw new NotImplementedException();
+            //return new List<AbstractItem>(_items.Where(i => i is Book));
+            List<AbstractItem> list;
+            if (item is Book)
+                list = GetBooks();
+            else
+                list = GetJournals();
+
+            return new List<AbstractItem>(list.Where(i => i.ItemName.ToLower().Contains(item.ItemName.ToLower()) 
+            && i.SubCategory.ToLower().Contains(item.SubCategory.ToLower())));
         }
 
         public List<AbstractItem> GetBooks()
@@ -77,11 +85,11 @@ namespace Model
 
 
 
-        public async Task<AuthenticationResult> UpdateInServer(AbstractItem item)
+        public async Task<ResultFromServer> UpdateInServer(AbstractItem item)
         {
             HttpClient httpClient = new HttpClient();
             HttpResponseMessage response;
-            AuthenticationResult result = AuthenticationResult.ConnectionFailed;
+            ResultFromServer result = ResultFromServer.ConnectionFailed;
 
             var values = new Dictionary<string, string>();
             values.Add("BookName", item.ItemName);
@@ -106,24 +114,24 @@ namespace Model
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
                     if (responseBody == "updated")
-                        result = AuthenticationResult.Ok;
+                        result = ResultFromServer.Ok;
                 }
                 else
-                    result = AuthenticationResult.ConnectionFailed;
+                    result = ResultFromServer.ConnectionFailed;
             }
             catch
             {
-                result = AuthenticationResult.ConnectionFailed;
+                result = ResultFromServer.ConnectionFailed;
             }
             return result;
         }
 
 
-        public async Task<AuthenticationResult> DeleteFromServer(AbstractItem item)
+        public async Task<ResultFromServer> DeleteFromServer(AbstractItem item)
         {
             HttpClient httpClient = new HttpClient();
             HttpResponseMessage response;
-            AuthenticationResult result = AuthenticationResult.ConnectionFailed;
+            ResultFromServer result = ResultFromServer.ConnectionFailed;
 
             var values = new Dictionary<string, string>();
             values.Add("Guid", item.Guid.ToString());
@@ -137,14 +145,14 @@ namespace Model
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
                     if (responseBody == "deleted")
-                        result = AuthenticationResult.Ok;
+                        result = ResultFromServer.Ok;
                 }
                 else
-                    result = AuthenticationResult.ConnectionFailed;
+                    result = ResultFromServer.ConnectionFailed;
             }
             catch
             {
-                result = AuthenticationResult.ConnectionFailed;
+                result = ResultFromServer.ConnectionFailed;
             }
             return result;
         }
@@ -152,11 +160,11 @@ namespace Model
 
 
 
-        public async Task<AuthenticationResult> AddItemToServer(AbstractItem item)
+        public async Task<ResultFromServer> AddItemToServer(AbstractItem item)
         {
             HttpClient httpClient = new HttpClient();
             HttpResponseMessage response;
-            AuthenticationResult result = AuthenticationResult.ConnectionFailed;
+            ResultFromServer result = ResultFromServer.ConnectionFailed;
 
             var values = new Dictionary<string, string>();
             values.Add("BookName", item.ItemName);
@@ -180,14 +188,14 @@ namespace Model
                 {
                     string responseBody = await response.Content.ReadAsStringAsync();
                     if (responseBody == "created")
-                        result = AuthenticationResult.Ok;
+                        result = ResultFromServer.Ok;
                 }
                 else
-                    result = AuthenticationResult.ConnectionFailed;
+                    result = ResultFromServer.ConnectionFailed;
             }
             catch
             {
-                result = AuthenticationResult.ConnectionFailed;
+                result = ResultFromServer.ConnectionFailed;
             }
             return result;
         }
@@ -195,7 +203,7 @@ namespace Model
 
 
 #if !OfflineMode
-        public async Task<AuthenticationResult> LoadDataFromServer()
+        public async Task<ResultFromServer> LoadDataFromServer()
         {
             HttpClient httpClient = new HttpClient();
             HttpResponseMessage response;
@@ -207,11 +215,11 @@ namespace Model
                 if (response.StatusCode == HttpStatusCode.OK)
                     responseBody = await response.Content.ReadAsStringAsync();
                 else
-                    return AuthenticationResult.ConnectionFailed;
+                    return ResultFromServer.ConnectionFailed;
             }
             catch
             {
-                return AuthenticationResult.ConnectionFailed;
+                return ResultFromServer.ConnectionFailed;
             }
 
             string[] words = responseBody.Split('^');
@@ -239,7 +247,7 @@ namespace Model
                 _items.Add(newItem);
 
             }
-            return AuthenticationResult.Ok;
+            return ResultFromServer.Ok;
         }
 #endif
 #if OfflineMode

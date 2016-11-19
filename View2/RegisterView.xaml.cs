@@ -1,4 +1,5 @@
-﻿using Presenter;
+﻿using Model;
+using Presenter;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -35,7 +37,12 @@ namespace View
         }
 
         public event EventHandler GoBack;
-        public event EventHandler<SubmitEventArgs> Submit;
+        public event EventHandler<UserEventArgs> Submit;
+
+        public void RequestFinished()
+        {
+            submitBtn.IsEnabled = true;
+        }
 
         public string StringFromServer { set { stringFromServer.Text = value; } }
 
@@ -66,14 +73,25 @@ namespace View
 
         private void submitBtn_Click(object sender, RoutedEventArgs e)
         {
+            //Disabling the button while getting answer from the server
+            submitBtn.IsEnabled = false;
+
+            User user = new User
+            {
+                Username = usernameTxtBox.Text,
+                Password = passwordBox.Password,
+                FirstName = firstNameTxtBox.Text,
+                LastName = lastNameTxtBox.Text
+            };
+
             if (Submit != null)
-                Submit(this, new SubmitEventArgs(usernameTxtBox.Text, passwordBox.Password, 
-                    firstNameTxtBox.Text, lastNameTxtBox.Text));
+                Submit(this, new UserEventArgs(user));
         }
 
-        public void SetLoginCreatedPage()
+        public async void ShowMessage(string message)
         {
-            Frame.Navigate(typeof(View.LoginCreatedPage));
+            var messageDialog = new MessageDialog(message);
+            await messageDialog.ShowAsync();
         }
 
         public void SetPreviusView()

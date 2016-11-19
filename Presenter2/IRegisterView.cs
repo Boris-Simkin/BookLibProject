@@ -8,13 +8,11 @@ namespace Presenter
 {
     public interface IRegisterView
     {
-        event EventHandler<SubmitEventArgs> Submit;
+        event EventHandler<UserEventArgs> Submit;
         event EventHandler GoBack;
-        //event EventHandler LoginCreated;
         string StringFromServer { set; }
-        void SetLoginCreatedPage();
+        void ShowMessage(string message);
         void SetPreviusView();
-        //void SetErrorMessage(string message);
-
+        void RequestFinished();
     }
 }

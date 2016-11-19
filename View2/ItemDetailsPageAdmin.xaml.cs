@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -101,17 +102,22 @@ namespace View
 
         }
 
-        private void deleteBtn_Click(object sender, RoutedEventArgs e)
+        private async void deleteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var messageDialog = new MessageDialog($"Are you sure, you want to delete this item?");
+            messageDialog.Commands.Add(new UICommand("Yes", DeleteRequest));
+            messageDialog.Commands.Add(new UICommand("No"));
+            await messageDialog.ShowAsync();
+        }
+
+        private void DeleteRequest(IUICommand command)
         {
             if (Delete != null)
                 Delete(this, new ItemEventArgs(_item));
-            //if (_item is Book)
-            //    Frame.Navigate(typeof(View.MessagePage), "Book is deleted.");
-            //else
-            //    Frame.Navigate(typeof(View.MessagePage), "Magazine is deleted.");
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+
+        private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
             //Is Book
             if (_item is Book)

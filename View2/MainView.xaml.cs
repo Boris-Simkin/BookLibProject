@@ -18,6 +18,7 @@ using Presenter;
 using System.Diagnostics;
 using Windows.UI;
 using Windows.System;
+using Windows.UI.Popups;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -37,6 +38,11 @@ namespace View
         public event EventHandler<StringEventArgs> SearchTextChanged;
 
         public int SetCounter { set { itemCountTxtBlk.Text = value.ToString(); } }
+        
+        public void SetTitle(string title)
+        {
+            titleTxtBlk.Text = title;
+        }
 
         public void HideToolBar()
         {
@@ -167,13 +173,6 @@ namespace View
             Frame.Navigate(typeof(LoginView));
         }
 
-        private void searchTxtBox_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-
-            //titleTxtBlk.Text = "results";
-            //ClearCounter();
-        }
-
         private string _tempTitle;
 
         private void searchTxtBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -195,17 +194,18 @@ namespace View
 
         }
 
-        private void searchByBtn_Click(object sender, RoutedEventArgs e)
+        private void searchToolsBtn_Click(object sender, RoutedEventArgs e)
         {
             HideToolBar();
             ClearCounter();
-            titleTxtBlk.Text = "Advanced search";
+            titleTxtBlk.Text = "Search tools";
             mainFrame.Navigate(typeof(AdvancedSearchPage));
         }
-
-        public void ShowMessage(string str)
+        
+        public async void ShowMessage(string str)
         {
-            mainFrame.Navigate(typeof(MessagePage), str);
+            var messageDialog = new MessageDialog(str);
+            await messageDialog.ShowAsync();
         }
     }
 }

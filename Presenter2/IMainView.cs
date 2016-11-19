@@ -11,8 +11,10 @@ namespace Presenter
     {
         void HideToolBar();
         void IsAdmin(bool value);
+        void SetTitle(string title);
         void SetUserName(string userName);
         void SetBooksListPage();
+        void SetMagazinesListPage();
         void ClearTitle();
         void ShowMessage(string str);
         int SetCounter { set; }

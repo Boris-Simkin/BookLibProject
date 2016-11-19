@@ -109,10 +109,10 @@
     <Compile Include="Category.cs" />
     <Compile Include="Crypt.cs" />
     <Compile Include="IItemsCollection.cs" />
-    <Compile Include="IUsers.cs" />
     <Compile Include="ItemsCollection.cs" />
     <Compile Include="Journal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="User.cs" />
     <Compile Include="Users.cs" />
   </ItemGroup>

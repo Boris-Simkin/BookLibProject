@@ -2,11 +2,13 @@
 using Presenter;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -24,8 +26,9 @@ namespace View
     /// </summary>
     public sealed partial class ManageUsersPage : Page, IManageUsers
     {
-        public event EventHandler<SubmitEventArgs> MakeAdmin;
-        public event EventHandler<SubmitEventArgs> DeleteUser;
+        public event EventHandler<UserEventArgs> MakeAdmin;
+        public event EventHandler<UserEventArgs> DeleteUser;
+        public event EventHandler PageLoaded;
 
         public ManageUsersPage()
         {
@@ -33,28 +36,69 @@ namespace View
             this.Loaded += ManageUsersPage_Loaded;
         }
 
+        public void RequestFinished()
+        {
+            makeAdminBtn.IsEnabled = true;
+            deleteUserBtn.IsEnabled = true;
+            sourceList.Remove((User)usersListView.SelectedItem);
+        }
+
+        private ObservableCollection<User> sourceList { get; set; }
+
         public List<User> SourceList
         {
-            get { return (List<User>)usersListView.ItemsSource; }
-            set { usersListView.ItemsSource = value; }
+            set { sourceList = new ObservableCollection<User>(value); }
         }
+
 
         private void ManageUsersPage_Loaded(object sender, RoutedEventArgs e)
         {
+            DataContext = this;
             MainPresenter.ManageUsersPage = this;
-           // usersListView.ItemsSource =;
+            if (PageLoaded != null)
+                PageLoaded(this, EventArgs.Empty);
+
+            usersListView.ItemsSource = sourceList;
         }
 
-        private void deleteUserBtn_Click(object sender, RoutedEventArgs e)
+        private async void deleteUserBtn_Click(object sender, RoutedEventArgs e)
         {
-            //if (DeleteUser != null)
-            //    DeleteUser(this, new SubmitEventArgs());
+            var messageDialog = new MessageDialog($"Are you sure, you want to delete {((User)usersListView.SelectedItem).FirstName}?");
+            messageDialog.Commands.Add(new UICommand("Yes", DeleteRequest));
+            messageDialog.Commands.Add(new UICommand("No"));
+            await messageDialog.ShowAsync();
         }
 
-        private void makeAdminBtn_Click(object sender, RoutedEventArgs e)
+        private async void makeAdminBtn_Click(object sender, RoutedEventArgs e)
         {
-            //if (MakeAdmin != null)
-            //    MakeAdmin(this, new SubmitEventArgs());
+            var messageDialog = new MessageDialog($"Are you sure, you want make {((User)usersListView.SelectedItem).FirstName} administrator?");
+            messageDialog.Commands.Add(new UICommand("Yes", MakeAdminRequest));
+            messageDialog.Commands.Add(new UICommand("No"));
+            await messageDialog.ShowAsync();
+        }
+
+        private void DeleteRequest(IUICommand command)
+        {
+            deleteUserBtn.IsEnabled = false;
+            var user = (User)usersListView.SelectedItem;
+            if (DeleteUser != null)
+                DeleteUser(this, new UserEventArgs(user));
+        }
+
+        private void MakeAdminRequest(IUICommand command)
+        {
+            makeAdminBtn.IsEnabled = false;
+            var user = (User)usersListView.SelectedItem;
+            if (MakeAdmin != null)
+                MakeAdmin(this, new UserEventArgs(user));
+        }
+
+
+
+        private void usersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            makeAdminBtn.IsEnabled = usersListView.SelectedItem != null;
+            deleteUserBtn.IsEnabled = usersListView.SelectedItem != null;
         }
     }
 }
