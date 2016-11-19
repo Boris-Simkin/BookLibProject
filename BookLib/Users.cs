@@ -66,7 +66,7 @@ namespace Model
         {
             if (user.IsAdmin)
                 throw new ArgumentException("Cannot remove administrator user.");
-            
+
             HttpClient httpClient = new HttpClient();
             HttpResponseMessage response;
             var values = new Dictionary<string, string>();
@@ -93,110 +93,86 @@ namespace Model
             return result;
         }
 
-
-
         public async Task<ResultFromServer> GetUsersFromServer()
         {
-            HttpClient httpClient = new HttpClient();
-            HttpResponseMessage response;
-
-            string responseBody = string.Empty;
-            try
+            var result = await Server.Connect("GetUsers.php");
+            if (result == ResultFromServer.Ok)
             {
-                response = await httpClient.GetAsync("http://simkin.atwebpages.com/GetUsers.php");
-                if (response.StatusCode == HttpStatusCode.OK)
-                    responseBody = await response.Content.ReadAsStringAsync();
-                else
-                    return ResultFromServer.ConnectionFailed;
-            }
-            catch
-            {
-                return ResultFromServer.ConnectionFailed;
-            }
+                string[] words = Server.ResponseWords;
 
-            string[] words = responseBody.Split('^');
-            for (int i = 0; i < (words.Length - 4); i += 4)
-            {
-                User newUser = new User();
-                newUser.Username = words[0 + i];
-                newUser.FirstName = words[1 + i];
-                newUser.LastName = words[2 + i];
-                if (words[3 + i] == "1")
-                    newUser.IsAdmin = true;
-                else
-                    newUser.IsAdmin = false;
-                _users.Add(newUser);
-
+                for (int i = 0; i < (words.Length - 4); i += 4)
+                {
+                    User newUser = new User();
+                    newUser.Username = words[0 + i];
+                    newUser.FirstName = words[1 + i];
+                    newUser.LastName = words[2 + i];
+                    if (words[3 + i] == "1")
+                        newUser.IsAdmin = true;
+                    else
+                        newUser.IsAdmin = false;
+                    _users.Add(newUser);
+                }
+                return ResultFromServer.Ok;
             }
-            return ResultFromServer.Ok;
+            return ResultFromServer.ConnectionFailed;
         }
 
         public async Task<ResultFromServer> Authentication(User user)
         {
-            HttpClient httpClient = new HttpClient();
-            HttpResponseMessage response;
+            //HttpClient httpClient = new HttpClient();
+            //HttpResponseMessage response;
             var values = new Dictionary<string, string>();
             values.Add("Username", user.Username);
             values.Add("Password", user.Password);
-            var content = new FormUrlEncodedContent(values);
-            try
-            {
-                response = await httpClient.PostAsync("http://simkin.atwebpages.com/Login.php", content);
-            }
-            catch
-            {
-                return ResultFromServer.ConnectionFailed;
-            }
-            if (response.StatusCode != HttpStatusCode.OK)
-                return ResultFromServer.ConnectionFailed;
+            var result = await Server.Connect("Login.php", values);
+            //var content = new FormUrlEncodedContent(values);
+            //try
+            //{
+            //    response = await httpClient.PostAsync("http://simkin.atwebpages.com/Login.php", content);
+            //}
+            //catch
+            //{
+            //    return ResultFromServer.ConnectionFailed;
+            //}
+            //if (response.StatusCode != HttpStatusCode.OK)
+            //    return ResultFromServer.ConnectionFailed;
 
-            string responseBody = await response.Content.ReadAsStringAsync();
+            //string responseBody = await response.Content.ReadAsStringAsync();
 
-            if (responseBody != "isuser" && responseBody != "isadmin")
-                return ResultFromServer.ParamsIncorrect;
+            //if (responseBody != "isuser" && responseBody != "isadmin")
+            //    return ResultFromServer.ParamsIncorrect;
 
-            if (responseBody == "isuser")
+            //if (responseBody == "isuser")
+            //{
+            //    CurrentUser.IsAdmin = false;
+            //}
+            //else if (responseBody == "isadmin")
+            //{
+            //    CurrentUser.IsAdmin = true;
+            //}
+            if (result == ResultFromServer.Ok)
             {
-                CurrentUser.IsAdmin = false;
-            }
-            else if (responseBody == "isadmin")
-            {
-                CurrentUser.IsAdmin = true;
+                values.Remove("Password");
+                var result2 = await Server.Connect("IsAdmin.php", values);
+                if (result2 == ResultFromServer.ConnectionFailed)
+                    return result2;
+
+                CurrentUser.IsAdmin = Server.ResponseWords[0] == "1";
+                CurrentUser.Username = user.Username;
             }
 
-            CurrentUser.Username = user.Username;
             return ResultFromServer.Ok;
         }
 
         public async Task<ResultFromServer> Registration(User user)
         {
-            //string username = user.Username;
-            HttpClient httpClient = new HttpClient();
-            HttpResponseMessage response;
             var values = new Dictionary<string, string>();
             values.Add("Username", user.Username);
             values.Add("FName", user.FirstName);
             values.Add("LName", user.LastName);
             values.Add("Password", user.Password);
-            var content = new FormUrlEncodedContent(values);
-            ResultFromServer result = ResultFromServer.ConnectionFailed;
-            try
-            {
-                response = await httpClient.PostAsync("http://simkin.atwebpages.com/SignIn.php", content);
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    if (responseBody == "created")
-                        result = ResultFromServer.Ok;
-                    else
-                        result = ResultFromServer.ParamsIncorrect;
-                }
-            }
-            catch
-            {
-                result = ResultFromServer.ConnectionFailed;
-            }
-            return result;
+            //Sending the user data to the server
+            return await Server.Connect("SignIn.php", values);
         }
 
     }

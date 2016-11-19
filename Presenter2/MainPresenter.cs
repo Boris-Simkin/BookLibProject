@@ -378,6 +378,7 @@ namespace Presenter
                         else
                         {
                             Task<ResultFromServer> task2 = _users.GetUsersFromServer();
+
                             if (await task2 == ResultFromServer.Ok)
                             {
                                 LoginView.SetMainView();
