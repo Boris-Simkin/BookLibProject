@@ -47,25 +47,45 @@ namespace Presenter
         {
             Task<ResultFromServer> task = _users.MakeUserAdmin(e.User);
 
-            if (await task == ResultFromServer.Ok)
-                _users.GetUsers().Remove(e.User);
-            else
-                _mainView.ShowMessage("Connection failed");
-
-            ManageUsersPage.RequestFinished();
+            switch (await task)
+            {
+                case ResultFromServer.Yes:
+                    ManageUsersPage.RequestFinished(true);
+                    break;
+                case ResultFromServer.No:
+                    _mainView.ShowMessage("This user does not exist");
+                    ManageUsersPage.RequestFinished(true);
+                    break;
+                case ResultFromServer.ConnectionFailed:
+                    _mainView.ShowMessage("Connection failed");
+                    ManageUsersPage.RequestFinished(false);
+                    break;
+                default:
+                    break;
+            }
         }
 
         private async static void _manageUsers_DeleteUser(object sender, UserEventArgs e)
         {
             Task<ResultFromServer> task = _users.RemoveUserFromServer(e.User);
 
-            if (await task == ResultFromServer.Ok)
-                _users.GetUsers().Remove(e.User);
-                
-            else
-                _mainView.ShowMessage("Connection failed");
-
-            ManageUsersPage.RequestFinished();
+            switch (await task)
+            {
+                case ResultFromServer.Yes:
+                    _users.GetUsers().Remove(e.User);
+                    ManageUsersPage.RequestFinished(true);
+                    break;
+                case ResultFromServer.No:
+                    _mainView.ShowMessage("This user does not exist");
+                    ManageUsersPage.RequestFinished(true);
+                    break;
+                case ResultFromServer.ConnectionFailed:
+                    _mainView.ShowMessage("Connection failed");
+                    ManageUsersPage.RequestFinished(false);
+                    break;
+                default:
+                    break;
+            }
         }
 
         public static IAdvancedSearchPage AdvancedSearchPage
@@ -106,11 +126,15 @@ namespace Presenter
 
         private static async void _itemDetailsPageAdmin_Delete(object sender, ItemEventArgs e)
         {
-            ResultFromServer result = await _itemsCollection.DeleteFromServer(e.Item);
+            ResultFromServer task = await _itemsCollection.DeleteFromServer(e.Item);
+            AbstractItem temp;
 
-            if (result == ResultFromServer.Ok)
+            if (task == ResultFromServer.No)
+                _mainView.ShowMessage("This item does not exist");
+
+            if (task == ResultFromServer.Yes || task == ResultFromServer.No)
             {
-                var temp = e.Item;
+                temp = e.Item;
                 _itemsCollection.DeleteItem(e.Item);
                 if (e.Item is Book)
                     _mainView.SetBooksListPage();
@@ -119,24 +143,31 @@ namespace Presenter
             }
             else
                 _mainView.ShowMessage("Connection failed");
+
         }
 
         private static async void _itemDetailsPageAdmin_UpdateItem(object sender, ItemEventArgs e)
         {
-            ResultFromServer result = await _itemsCollection.UpdateInServer(e.Item);
-
-            if (result == ResultFromServer.Ok)
+            switch (await _itemsCollection.UpdateInServer(e.Item))
             {
-                _itemsCollection.UpdateItem(e.Item);
+                case ResultFromServer.Yes:
+                    _itemsCollection.UpdateItem(e.Item);
 
-                if (e.Item is Book)
-                    _mainView.ShowMessage("Book updated.");
-                else
-                    _mainView.ShowMessage("Magazine updated.");
-
+                    if (e.Item is Book)
+                        _mainView.ShowMessage("Book updated");
+                    else
+                        _mainView.ShowMessage("Magazine updated");
+                    _itemDetailsPageAdmin.OperationSucceeded();
+                    break;
+                case ResultFromServer.No:
+                    _mainView.ShowMessage("This item does not exist");
+                    break;
+                case ResultFromServer.ConnectionFailed:
+                    _mainView.ShowMessage("Connection failed");
+                    break;
+                default:
+                    break;
             }
-            else
-                _mainView.ShowMessage("Connection failed");
         }
 
         public static IItemListPage ItemListPage
@@ -187,7 +218,7 @@ namespace Presenter
         {
             ResultFromServer result = await _itemsCollection.AddItemToServer(e.Item);
 
-            if (result == ResultFromServer.Ok)
+            if (result == ResultFromServer.Yes)
             {
                 _itemsCollection.AddItem(e.Item);
 
@@ -239,11 +270,11 @@ namespace Presenter
             Task<ResultFromServer> task = _users.Registration(e.User);
             switch (await task)
             {
-                case ResultFromServer.Ok:
+                case ResultFromServer.Yes:
                     _registerView.ShowMessage("Your account was successfully created!");
                     _registerView.SetPreviusView();
                     break;
-                case ResultFromServer.ParamsIncorrect:
+                case ResultFromServer.No:
                     _registerView.StringFromServer = "This username already in use";
                     break;
                 case ResultFromServer.ConnectionFailed:
@@ -365,10 +396,10 @@ namespace Presenter
 
             switch (await task)
             {
-                case ResultFromServer.Ok:
+                case ResultFromServer.Yes:
 
                     var result = await _itemsCollection.LoadDataFromServer();
-                    if (result == ResultFromServer.Ok)
+                    if (result == ResultFromServer.Yes)
                     {
                         if (!_users.CurrentUser.IsAdmin)
                         {
@@ -379,7 +410,7 @@ namespace Presenter
                         {
                             Task<ResultFromServer> task2 = _users.GetUsersFromServer();
 
-                            if (await task2 == ResultFromServer.Ok)
+                            if (await task2 == ResultFromServer.Yes)
                             {
                                 LoginView.SetMainView();
                                 _mainView.SetUserName(_users.CurrentUser.Username);
@@ -391,7 +422,7 @@ namespace Presenter
                     else
                         LoginView.StringFromServer = "Could not connect to server db";
                     break;
-                case ResultFromServer.ParamsIncorrect:
+                case ResultFromServer.No:
                     LoginView.StringFromServer = "Incorrect username or password";
                     break;
                 case ResultFromServer.ConnectionFailed:
@@ -402,11 +433,6 @@ namespace Presenter
             }
 
             LoginView.RequestFinished();
-        }
-
-        private async static void requestSubmit(string username, string password)
-        {
-
         }
 
         static MainPresenter()

@@ -13,6 +13,6 @@ namespace Presenter
         event EventHandler<UserEventArgs> DeleteUser;
         event EventHandler PageLoaded;
         List<User> SourceList { set; }
-        void RequestFinished();
+        void RequestFinished(bool removeFromTable);
     }
 }

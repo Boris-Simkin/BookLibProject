@@ -58,11 +58,15 @@ namespace View
         private void textBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             submitBtn.IsEnabled = satisfyConditions();
+            //Clear the string message if exist
+            stringFromServer.Text = string.Empty;
         }
 
         private void passwordBox_PasswordChanged(object sender, RoutedEventArgs e)
         {
             submitBtn.IsEnabled = satisfyConditions();
+            //Clear the string message if exist
+            stringFromServer.Text = string.Empty;
         }
 
         private void cancleBtn_Click(object sender, RoutedEventArgs e)

@@ -36,11 +36,12 @@ namespace View
             this.Loaded += ManageUsersPage_Loaded;
         }
 
-        public void RequestFinished()
+        public void RequestFinished(bool removeFromTable)
         {
             makeAdminBtn.IsEnabled = true;
             deleteUserBtn.IsEnabled = true;
-            sourceList.Remove((User)usersListView.SelectedItem);
+            if (removeFromTable)
+                sourceList.Remove((User)usersListView.SelectedItem);
         }
 
         private ObservableCollection<User> sourceList { get; set; }

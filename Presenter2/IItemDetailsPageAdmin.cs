@@ -9,6 +9,7 @@ namespace Presenter
 {
     public interface IItemDetailsPageAdmin
     {
+        void OperationSucceeded();
         void SetContent(AbstractItem item);
         event EventHandler<ItemEventArgs> Save;
         event EventHandler<ItemEventArgs> Delete;

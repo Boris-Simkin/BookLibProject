@@ -53,7 +53,7 @@ namespace Model
             else
                 list = GetJournals();
 
-            return new List<AbstractItem>(list.Where(i => i.ItemName.ToLower().Contains(item.ItemName.ToLower()) 
+            return new List<AbstractItem>(list.Where(i => i.ItemName.ToLower().Contains(item.ItemName.ToLower())
             && i.SubCategory.ToLower().Contains(item.SubCategory.ToLower())));
         }
 
@@ -83,14 +83,8 @@ namespace Model
             _items.Clear();
         }
 
-
-
         public async Task<ResultFromServer> UpdateInServer(AbstractItem item)
         {
-            HttpClient httpClient = new HttpClient();
-            HttpResponseMessage response;
-            ResultFromServer result = ResultFromServer.ConnectionFailed;
-
             var values = new Dictionary<string, string>();
             values.Add("BookName", item.ItemName);
             values.Add("Date", ((DateTimeOffset)item.Date).ToString("d"));
@@ -105,67 +99,19 @@ namespace Model
             values.Add("SubCategory", item.SubCategory);
             values.Add("BorrowedCopies", item.BorrowedCopies.ToString());
 
-            var content = new FormUrlEncodedContent(values);
-
-            try
-            {
-                response = await httpClient.PostAsync("http://simkin.atwebpages.com/UpdateBook.php", content);
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    if (responseBody == "updated")
-                        result = ResultFromServer.Ok;
-                }
-                else
-                    result = ResultFromServer.ConnectionFailed;
-            }
-            catch
-            {
-                result = ResultFromServer.ConnectionFailed;
-            }
-            return result;
+            return await Server.Connect("UpdateBook.php", values);
         }
 
 
         public async Task<ResultFromServer> DeleteFromServer(AbstractItem item)
         {
-            HttpClient httpClient = new HttpClient();
-            HttpResponseMessage response;
-            ResultFromServer result = ResultFromServer.ConnectionFailed;
-
             var values = new Dictionary<string, string>();
             values.Add("Guid", item.Guid.ToString());
-
-            var content = new FormUrlEncodedContent(values);
-
-            try
-            {
-                response = await httpClient.PostAsync("http://simkin.atwebpages.com/DeleteBook.php", content);
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    if (responseBody == "deleted")
-                        result = ResultFromServer.Ok;
-                }
-                else
-                    result = ResultFromServer.ConnectionFailed;
-            }
-            catch
-            {
-                result = ResultFromServer.ConnectionFailed;
-            }
-            return result;
+            return await Server.Connect("DeleteBook.php", values);
         }
-
-
-
 
         public async Task<ResultFromServer> AddItemToServer(AbstractItem item)
         {
-            HttpClient httpClient = new HttpClient();
-            HttpResponseMessage response;
-            ResultFromServer result = ResultFromServer.ConnectionFailed;
-
             var values = new Dictionary<string, string>();
             values.Add("BookName", item.ItemName);
             values.Add("Date", ((DateTimeOffset)item.Date).ToString("d"));
@@ -179,97 +125,50 @@ namespace Model
                 values.Add("Category", ((Journal)item).Category.ToString());
             values.Add("SubCategory", item.SubCategory);
             values.Add("BorrowedCopies", item.BorrowedCopies.ToString());
-            var content = new FormUrlEncodedContent(values);
 
-            try
+            //var result = await Server.Connect("AddBook.php", values);
+            if (await Server.Connect("AddBook.php", values) != ResultFromServer.Yes)
+                return ResultFromServer.ConnectionFailed;
+
+            return ResultFromServer.Yes;
+        }
+
+        public async Task<ResultFromServer> LoadDataFromServer()
+        {
+            var result = await Server.Connect("GetBooks.php");
+            if (result != ResultFromServer.ConnectionFailed)
             {
-                response = await httpClient.PostAsync("http://simkin.atwebpages.com/AddBook.php", content);
-                if (response.StatusCode == HttpStatusCode.OK)
+                string[] words = Server.ResponseWords;
+
+                for (int i = 0; i < (words.Length - 8); i += 8)
                 {
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    if (responseBody == "created")
-                        result = ResultFromServer.Ok;
+                    AbstractItem newItem;
+                    Book.BookCategory bookCategory;
+                    Journal.JournalCategory journalCategory;
+                    //Trying parse the category to book or journal
+                    bool isbook = Enum.TryParse(words[i + 5], out bookCategory);
+                    Enum.TryParse(words[i + 5], out journalCategory);
+
+                    if (isbook)
+                        newItem = new Book(words[i + 0], new Guid(words[i + 3]), bookCategory, words[i + 6]);
+                    else
+                        newItem = new Journal(words[i + 0], new Guid(words[i + 3]), journalCategory, words[i + 6]);
+
+                    newItem.Date = DateTimeOffset.Parse(words[i + 1], CultureInfo.InvariantCulture);
+
+                    //Decrypt the url
+                    newItem.CoverImage = Crypt.Decrypt("boris", words[i + 4]);
+
+                    newItem.CopyNumber = int.Parse(words[i + 2]);
+                    newItem.BorrowedCopies = int.Parse(words[i + 7]);
+                    _items.Add(newItem);
+
                 }
-                else
-                    result = ResultFromServer.ConnectionFailed;
-            }
-            catch
-            {
-                result = ResultFromServer.ConnectionFailed;
+                return ResultFromServer.Yes;
             }
             return result;
         }
 
 
-
-#if !OfflineMode
-        public async Task<ResultFromServer> LoadDataFromServer()
-        {
-            HttpClient httpClient = new HttpClient();
-            HttpResponseMessage response;
-
-            string responseBody = string.Empty;
-            try
-            {
-                response = await httpClient.GetAsync("http://simkin.atwebpages.com/GetBooks.php");
-                if (response.StatusCode == HttpStatusCode.OK)
-                    responseBody = await response.Content.ReadAsStringAsync();
-                else
-                    return ResultFromServer.ConnectionFailed;
-            }
-            catch
-            {
-                return ResultFromServer.ConnectionFailed;
-            }
-
-            string[] words = responseBody.Split('^');
-            for (int i = 0; i < (words.Length - 8); i += 8)
-            {
-                AbstractItem newItem;
-                Book.BookCategory bookCategory;
-                Journal.JournalCategory journalCategory;
-                //Trying parse the category to book or journal
-                bool isbook = Enum.TryParse(words[i + 5], out bookCategory);
-                Enum.TryParse(words[i + 5], out journalCategory);
-
-                if (isbook)
-                    newItem = new Book(words[i + 0], new Guid(words[i + 3]), bookCategory, words[i + 6]);
-                else
-                    newItem = new Journal(words[i + 0], new Guid(words[i + 3]), journalCategory, words[i + 6]);
-
-                newItem.Date = DateTimeOffset.Parse(words[i + 1], CultureInfo.InvariantCulture);
-
-                //Decrypt the url
-                newItem.CoverImage = Crypt.Decrypt("boris", words[i + 4]);
-
-                newItem.CopyNumber = int.Parse(words[i + 2]);
-                newItem.BorrowedCopies = int.Parse(words[i + 7]);
-                _items.Add(newItem);
-
-            }
-            return ResultFromServer.Ok;
-        }
-#endif
-#if OfflineMode
-        public async Task<AuthenticationResult> LoadData()
-        {
-            for (int i = 0; i < 50; i++)
-            {
-                var newItem = new Book("Harry Potter", Guid.NewGuid(), Book.BookCategory.Fiction, "Fantasy");
-                if (i % 5 == 0) newItem.CoverImage = "http://bookriotcom.c.presscdn.com/wp-content/uploads/2014/08/HP_hc_old_2.jpg";
-                if (i % 4 == 0) newItem.CoverImage = "http://mediaroom.scholastic.com/files/HP4cover.jpg";
-                _items.Add(newItem);
-            }
-
-            for (int i = 0; i < 20; i++)
-            {
-                var newItem = new Journal("Blaizer", Guid.NewGuid(), Journal.JournalCategory.Men, "");
-                if (i % 5 == 0) newItem.CoverImage = "http://orig05.deviantart.net/0c8f/f/2011/024/f/9/happy_man_magazine_by_johnnyrocker666-d37z81t.png";
-                if (i % 4 == 0) newItem.CoverImage = "https://israelibreakfast.files.wordpress.com/2012/11/155933_10151241566587342_296280234_n.jpg";
-                _items.Add(newItem);
-            }
-            return AuthenticationResult.Ok;
-        }
-#endif
     }
 }

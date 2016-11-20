@@ -12,8 +12,8 @@ namespace Model
     public enum ResultFromServer
     {
         ConnectionFailed,
-        ParamsIncorrect,
-        Ok,
+        No,
+        Yes,
     }
 
     static class Server
@@ -72,18 +72,14 @@ namespace Model
 
                     switch (responseBody)
                     {
-                        case "ok":
-                            return ResultFromServer.Ok;
-                        case "incorrect":
-                            return ResultFromServer.ParamsIncorrect;
+                        case "yes":
+                            return ResultFromServer.Yes;
+                        case "no":
+                            return ResultFromServer.No;
                         default:
                             ResponseWords = responseBody.Split('^');
                             break;
                     }
-                    //if (/*protocolType == ProtocolType.Post && */responseBody == "incorrect")
-                    //    return ResultFromServer.ParamsIncorrect;
-                    //else
-                    //    ResponseWords = responseBody.Split('^');
                 }
                 else
                     return ResultFromServer.ConnectionFailed;
@@ -93,7 +89,7 @@ namespace Model
                 return ResultFromServer.ConnectionFailed;
             }
 
-            return ResultFromServer.Ok;
+            return ResultFromServer.Yes;
         }
 
     }

@@ -35,6 +35,7 @@ namespace View
         {
             string defaultImageLocation;
             string category;
+            //Setting default images for items without covers
             if (item is Book)
             {
                 category = ((Book)item).Category.ToString();

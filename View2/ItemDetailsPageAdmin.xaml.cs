@@ -116,6 +116,10 @@ namespace View
                 Delete(this, new ItemEventArgs(_item));
         }
 
+        public void OperationSucceeded()
+        {
+            saveBtn.IsEnabled = false;
+        }
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -135,7 +139,7 @@ namespace View
             if (Save != null)
                 Save(this, new ItemEventArgs(_item));
 
-            saveBtn.IsEnabled = false;
+            //saveBtn.IsEnabled = false;
         }
 
         private void PropChanged(object sender, TextChangedEventArgs e)

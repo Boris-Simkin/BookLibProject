@@ -30,73 +30,27 @@ namespace Model
 
         public User CurrentUser { get; set; }
 
-
         public async Task<ResultFromServer> MakeUserAdmin(User user)
         {
-
-            HttpClient httpClient = new HttpClient();
-            HttpResponseMessage response;
             var values = new Dictionary<string, string>();
             values.Add("Username", user.Username);
-
-            var content = new FormUrlEncodedContent(values);
-            ResultFromServer result = ResultFromServer.ConnectionFailed;
-            try
-            {
-                response = await httpClient.PostAsync("http://simkin.atwebpages.com/MakeMeAdmin.php", content);
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    if (responseBody == "ok")
-                        result = ResultFromServer.Ok;
-                    else
-                        result = ResultFromServer.ParamsIncorrect;
-                }
-            }
-            catch
-            {
-                result = ResultFromServer.ConnectionFailed;
-            }
-            return result;
+            return await Server.Connect("MakeMeAdmin.php", values);
         }
-
-
 
         public async Task<ResultFromServer> RemoveUserFromServer(User user)
         {
             if (user.IsAdmin)
                 throw new ArgumentException("Cannot remove administrator user.");
 
-            HttpClient httpClient = new HttpClient();
-            HttpResponseMessage response;
             var values = new Dictionary<string, string>();
-            values.Add("Username", user.Username);
-
-            var content = new FormUrlEncodedContent(values);
-            ResultFromServer result = ResultFromServer.ConnectionFailed;
-            try
-            {
-                response = await httpClient.PostAsync("http://simkin.atwebpages.com/RemoveUser.php", content);
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    if (responseBody == "ok")
-                        result = ResultFromServer.Ok;
-                    else
-                        result = ResultFromServer.ParamsIncorrect;
-                }
-            }
-            catch
-            {
-                result = ResultFromServer.ConnectionFailed;
-            }
-            return result;
+            values.Add("Username",  user.Username);
+            return await Server.Connect("RemoveUser.php", values);
         }
 
         public async Task<ResultFromServer> GetUsersFromServer()
         {
             var result = await Server.Connect("GetUsers.php");
-            if (result == ResultFromServer.Ok)
+            if (result == ResultFromServer.Yes)
             {
                 string[] words = Server.ResponseWords;
 
@@ -112,56 +66,30 @@ namespace Model
                         newUser.IsAdmin = false;
                     _users.Add(newUser);
                 }
-                return ResultFromServer.Ok;
+                return ResultFromServer.Yes;
             }
             return ResultFromServer.ConnectionFailed;
         }
 
         public async Task<ResultFromServer> Authentication(User user)
         {
-            //HttpClient httpClient = new HttpClient();
-            //HttpResponseMessage response;
             var values = new Dictionary<string, string>();
             values.Add("Username", user.Username);
             values.Add("Password", user.Password);
+            //Checking if the username and password is correct
             var result = await Server.Connect("Login.php", values);
-            //var content = new FormUrlEncodedContent(values);
-            //try
-            //{
-            //    response = await httpClient.PostAsync("http://simkin.atwebpages.com/Login.php", content);
-            //}
-            //catch
-            //{
-            //    return ResultFromServer.ConnectionFailed;
-            //}
-            //if (response.StatusCode != HttpStatusCode.OK)
-            //    return ResultFromServer.ConnectionFailed;
-
-            //string responseBody = await response.Content.ReadAsStringAsync();
-
-            //if (responseBody != "isuser" && responseBody != "isadmin")
-            //    return ResultFromServer.ParamsIncorrect;
-
-            //if (responseBody == "isuser")
-            //{
-            //    CurrentUser.IsAdmin = false;
-            //}
-            //else if (responseBody == "isadmin")
-            //{
-            //    CurrentUser.IsAdmin = true;
-            //}
-            if (result == ResultFromServer.Ok)
+            if (result == ResultFromServer.Yes)
             {
                 values.Remove("Password");
+                //Checking if the user is administrator
                 var result2 = await Server.Connect("IsAdmin.php", values);
                 if (result2 == ResultFromServer.ConnectionFailed)
                     return result2;
 
-                CurrentUser.IsAdmin = Server.ResponseWords[0] == "1";
+                CurrentUser.IsAdmin = result2 == ResultFromServer.Yes;
                 CurrentUser.Username = user.Username;
             }
-
-            return ResultFromServer.Ok;
+            return result;
         }
 
         public async Task<ResultFromServer> Registration(User user)
@@ -174,6 +102,5 @@ namespace Model
             //Sending the user data to the server
             return await Server.Connect("SignIn.php", values);
         }
-
     }
 }
