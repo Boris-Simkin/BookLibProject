@@ -12,7 +12,7 @@
 
         <Grid HorizontalAlignment="Left" Height="440" Margin="1,85,0,0" VerticalAlignment="Top" Width="370">
             <Image x:Name="defaultCoverImage" Height="395" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="295" Margin="0,0,40,35" Stretch="Fill"/>
-            <Image x:Name="image" />
+            <Image x:Name="image" Source="{Binding CoverImage}"/>
         </Grid>
         <StackPanel Height="260" Margin="376,85,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="524">
             <StackPanel.Resources>
@@ -53,6 +53,9 @@
 
         </StackPanel>
         <Button x:Name="borrowBtn" Content="Borrow" HorizontalAlignment="Left" Margin="368,347,0,0" VerticalAlignment="Top" FontSize="33.333" Click="borrowBtn_Click"/>
+        <Image x:Name="defaultMagazineImage" Source="Assets/DefaultMagazineImage.png" IsHitTestVisible="False" Visibility="Collapsed" IsTapEnabled="False" IsRightTapEnabled="False" IsHoldingEnabled="False" IsDoubleTapEnabled="False" />
+        <Image x:Name="defaultBookImage" Source="Assets/DefaultBookImage.png" IsHitTestVisible="False" Visibility="Collapsed" IsTapEnabled="False" IsRightTapEnabled="False" IsHoldingEnabled="False" IsDoubleTapEnabled="False" />
+        <TextBlock x:Name="noFreeCopiesTxtBlk" HorizontalAlignment="Left" Margin="560,362,0,0" TextWrapping="Wrap" Text="No avaliable copies!" VerticalAlignment="Top" FontSize="33.333" Foreground="Red" Visibility="Collapsed"/>
 
     </Grid>
 </Page>

@@ -10,7 +10,7 @@
     <Grid>
         <Grid HorizontalAlignment="Left" Height="440" Margin="6,8,0,0" VerticalAlignment="Top" Width="370">
             <Image x:Name="defaultCoverImage" Height="395" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="295" Margin="0,0,40,35" Stretch="Fill"/>
-            <Image x:Name="image" />
+            <Image x:Name="image" Source="{Binding CoverImage}" />
         </Grid>
         <StackPanel Height="312" Margin="376,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="524">
             <StackPanel.Resources>
@@ -65,6 +65,9 @@
         <Button x:Name="borrowBtn" Content="Borrow" HorizontalAlignment="Left" Margin="373,392,0,0" VerticalAlignment="Top" FontSize="33.333" Click="borrowBtn_Click"/>
         <Button x:Name="deleteBtn" Content="Delete item" HorizontalAlignment="Left" Margin="583,326,0,0" VerticalAlignment="Top" FontSize="20" Click="deleteBtn_Click"/>
         <Button x:Name="saveBtn"  Content="Save changes" HorizontalAlignment="Left" Margin="373,326,0,0" VerticalAlignment="Top" FontSize="20" Click="SaveBtn_Click" IsEnabled="False"/>
+        <Image x:Name="defaultMagazineImage" Source="Assets/DefaultMagazineImage.png" IsHitTestVisible="False" Visibility="Collapsed" IsTapEnabled="False" IsRightTapEnabled="False" IsHoldingEnabled="False" IsDoubleTapEnabled="False" />
+        <Image x:Name="defaultBookImage" Source="Assets/DefaultBookImage.png" IsHitTestVisible="False" Visibility="Collapsed" IsTapEnabled="False" IsRightTapEnabled="False" IsHoldingEnabled="False" IsDoubleTapEnabled="False" />
+        <TextBlock x:Name="noFreeCopiesTxtBlk" HorizontalAlignment="Left" Margin="560,405,0,0" TextWrapping="Wrap" Text="No avaliable copies!" VerticalAlignment="Top" FontSize="33.333" Foreground="Red" Visibility="Collapsed"/>
 
     </Grid>
 </Page>

@@ -39,6 +39,7 @@
             <Button x:Name="submitBtn" Content="Submit" Click="submitBtn_Click" IsEnabled="False" Grid.Column="1" Margin="312,205,0,0" Grid.Row="1" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
             <TextBlock x:Name="textBlock" Grid.Column="1" HorizontalAlignment="Left" Margin="0,113,0,0" TextWrapping="Wrap" Text="Please login" VerticalAlignment="Top" FontSize="29.333"/>
             <Image x:Name="image1" HorizontalAlignment="Left" Height="219" Margin="10,-109,0,0" VerticalAlignment="Top" Width="230" Source="Assets/LibIcon.png" Grid.ColumnSpan="2"/>
+            <ProgressRing x:Name="progressRing" Grid.Column="1" HorizontalAlignment="Left" Margin="375,290,0,0" Grid.Row="1" VerticalAlignment="Top" Height="79" Width="100" Foreground="White"/>
         </Grid>
         <TextBlock x:Name="titleTextBlock" Grid.Row="0" FontSize="66.667" TextAlignment="Center" Text="Welcome to the library " HorizontalAlignment="Left" Margin="270,35,0,0" Foreground="Black"/>
         <TextBlock Grid.Row="2" x:Name="stringFromServer" FontSize="21.333" Foreground="#FFDE0000" TextAlignment="Center" Text=""/>

@@ -42,6 +42,8 @@ namespace View
         public void RequestFinished()
         {
             submitBtn.IsEnabled = true;
+            progressRing.IsActive = false;
+            progressRing.IsEnabled = false;
         }
 
         public string StringFromServer { set { stringFromServer.Text = value; } }
@@ -79,6 +81,8 @@ namespace View
         {
             //Disabling the button while getting answer from the server
             submitBtn.IsEnabled = false;
+            progressRing.IsActive = true;
+            progressRing.IsEnabled = true;
 
             User user = new User
             {

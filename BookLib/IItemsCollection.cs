@@ -8,14 +8,16 @@ namespace Model
 {
     public interface IItemsCollection
     {
-        Task<ResultFromServer> LoadDataFromServer();
+        Task<ResultFromServer> GetItemsFromServer();
         Task<ResultFromServer> AddItemToServer(AbstractItem item);
         Task<ResultFromServer> DeleteFromServer(AbstractItem item);
-        Task<ResultFromServer> UpdateInServer(AbstractItem item);
+        Task<ResultFromServer> UpdateItemInServer(AbstractItem item);
+        Task<ResultFromServer> BorrowReturnServer(User user, AbstractItem item, bool borrow);
         void AddItem(AbstractItem item);
         void UpdateItem(AbstractItem newitem);
         void DeleteItem(AbstractItem item);
-        AbstractItem GetItem();
+        void ReturnAllUserItems(User user);
+        //AbstractItem GetItem();
         List<AbstractItem> SearchByName(bool IsBook, string itemName);
         List<AbstractItem> AdvancedSearch(AbstractItem item);
         List<AbstractItem> GetJournals();

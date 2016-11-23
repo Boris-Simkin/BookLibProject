@@ -43,6 +43,8 @@ namespace View
 
         public void RequestFinished()
         {
+            progressRing.IsActive = false;
+            progressRing.IsEnabled = false;
             submitBtn.IsEnabled = true;
         }
 
@@ -77,7 +79,6 @@ namespace View
             {
                 //Prevent the key pressed twice
                 e.Handled = true;
-
                 SendSubmitParams();
             }
         }
@@ -91,7 +92,8 @@ namespace View
         {
             //Disabling the button while getting answer from the server
             submitBtn.IsEnabled = false;
-
+            progressRing.IsActive = true;
+            progressRing.IsEnabled = true;
             User user = new User
             {
                 Username = usernameTxtBox.Text,

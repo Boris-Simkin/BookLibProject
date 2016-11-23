@@ -94,8 +94,6 @@ namespace View
                 MakeAdmin(this, new UserEventArgs(user));
         }
 
-
-
         private void usersListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             makeAdminBtn.IsEnabled = usersListView.SelectedItem != null;

@@ -116,6 +116,13 @@ namespace View
             SetMagazinesListPage();
         }
 
+
+
+        private void SetListPage(EventHandler someEvent, string title)
+        {
+
+        }
+
         private void myBooksTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             toolBarGrid.Visibility = Visibility.Visible;
@@ -123,11 +130,6 @@ namespace View
             titleTxtBlk.Text = "My books";
             if (MyBooksClicked != null)
                 MyBooksClicked(this, EventArgs.Empty);
-        }
-
-        private void SetListPage(EventHandler someEvent, string title)
-        {
-
         }
 
         private void myMagazinesTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)

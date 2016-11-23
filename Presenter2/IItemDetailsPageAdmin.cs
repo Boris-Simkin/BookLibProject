@@ -9,9 +9,11 @@ namespace Presenter
 {
     public interface IItemDetailsPageAdmin
     {
-        void OperationSucceeded();
-        void SetContent(AbstractItem item);
+        void SaveSucceeded();
+        void SetContent(AbstractItem item, bool isReading);
+        void BorrowReturnSucceeded(bool isReading);
         event EventHandler<ItemEventArgs> Save;
         event EventHandler<ItemEventArgs> Delete;
+        event EventHandler<ItemEventArgs> Borrow;
     }
 }

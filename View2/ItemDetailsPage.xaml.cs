@@ -25,38 +25,59 @@ namespace View
     /// </summary>
     public sealed partial class ItemDetailsPage : Page, IItemDetailsPage
     {
+        AbstractItem _item;
 
         public ItemDetailsPage()
         {
             this.InitializeComponent();
         }
 
-        public void SetContent(AbstractItem item)
+        public event EventHandler<ItemEventArgs> Borrow;
+
+        private void SetReading(bool isReading)
         {
-            string defaultImageLocation;
+            if (isReading)
+                borrowBtn.Content = "Return";
+            else
+                borrowBtn.Content = "Borrow";
+        }
+
+        public void BorrowReturnSucceeded(bool isReading)
+        {
+            borrowBtn.IsEnabled = true;
+            SetReading(isReading);
+        }
+
+        public void SetContent(AbstractItem item, bool isReading)
+        {
+            _item = item;
+            if (item.BorrowedCopies >= item.CopyNumber && !isReading)
+            {
+                noFreeCopiesTxtBlk.Visibility = Visibility.Visible;
+                borrowBtn.IsEnabled = false;
+            }
+            DataContext = item;
             string category;
             //Setting default images for items without covers
             if (item is Book)
             {
                 category = ((Book)item).Category.ToString();
-                defaultImageLocation = "Assets/DefaultBookImage.png";
+                defaultCoverImage.Source = defaultBookImage.Source;
             }
             else
             {
                 category = ((Journal)item).Category.ToString();
-                defaultImageLocation = "Assets/DefaultMagazineImage.png";
+                defaultCoverImage.Source = defaultMagazineImage.Source;
             }
 
-            this.defaultCoverImage.Source =
-                new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri($"ms-appx:///{defaultImageLocation}"));
-            if (item.CoverImage != null && item.CoverImage != string.Empty)
-                image.Source = new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri(item.CoverImage));
             titleTxtBlk.Text = item.ItemName;
             GuidTxtBlk.Text = item.Guid.ToString();
             categoryTxtBlk.Text = category;
             subCategoryTxtBlk.Text = item.SubCategory;
             dateTxtBlk.Text = ((DateTimeOffset)item.Date).ToString("d");
             avaliableСopiesTxtBlk.Text = (item.CopyNumber - item.BorrowedCopies).ToString();
+
+            SetReading(isReading);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -66,7 +87,9 @@ namespace View
 
         private void borrowBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            borrowBtn.IsEnabled = false;
+            if (Borrow != null)
+                Borrow(this, new ItemEventArgs(_item));
         }
     }
 }

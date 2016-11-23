@@ -30,6 +30,26 @@ namespace Model
 
         public User CurrentUser { get; set; }
 
+        #region Server management methods
+
+        public async Task<ResultFromServer> GetUserItemsGuid(User user)
+        {
+            var values = new Dictionary<string, string>();
+            values.Add("Username", user.Username);
+            var result = await Server.Connect("GetUserItemsGuid.php", values);
+
+          if (result == ResultFromServer.Yes)
+            {
+                string[] words = Server.ResponseWords;
+
+                for (int i = 0; i < (words.Length - 1); i ++)
+                    user.MyItems.Add(new Guid(words[i]));
+
+                return ResultFromServer.Yes;
+            }
+            return ResultFromServer.ConnectionFailed;
+        }
+
         public async Task<ResultFromServer> MakeUserAdmin(User user)
         {
             var values = new Dictionary<string, string>();
@@ -102,5 +122,6 @@ namespace Model
             //Sending the user data to the server
             return await Server.Connect("SignIn.php", values);
         }
+        #endregion
     }
 }

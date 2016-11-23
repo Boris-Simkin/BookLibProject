@@ -67,11 +67,13 @@ namespace Presenter
 
         private async static void _manageUsers_DeleteUser(object sender, UserEventArgs e)
         {
+            await _users.GetUserItemsGuid(e.User);
             Task<ResultFromServer> task = _users.RemoveUserFromServer(e.User);
 
             switch (await task)
             {
                 case ResultFromServer.Yes:
+                    _itemsCollection.ReturnAllUserItems(e.User);
                     _users.GetUsers().Remove(e.User);
                     ManageUsersPage.RequestFinished(true);
                     break;
@@ -121,8 +123,81 @@ namespace Presenter
                 _itemDetailsPageAdmin = value;
                 _itemDetailsPageAdmin.Save += _itemDetailsPageAdmin_UpdateItem;
                 _itemDetailsPageAdmin.Delete += _itemDetailsPageAdmin_Delete;
+                _itemDetailsPageAdmin.Borrow += _itemDetailsPageAdmin_Borrow;
             }
         }
+
+        private static void _itemDetailsPageAdmin_Borrow(object sender, ItemEventArgs e)
+        {
+            BorrowReturnItem(e.Item);
+        }
+
+        private async static void BorrowReturnItem(AbstractItem item)
+        {
+            //if (item.BorrowedCopies >= item.CopyNumber)
+            //    throw new ArgumentException("No free items.");
+
+            //    throw new ArgumentException("The user already borrow this item.");
+            Task<ResultFromServer> task;
+            task = _itemsCollection.BorrowReturnServer(_users.CurrentUser, item, !_users.CurrentUser.IsReading(item));
+
+            //_itemsCollection.Borrow(_users.CurrentUser, item);
+            //else _itemsCollection.Return(_users.CurrentUser, item);
+
+
+            switch (await task)
+            {
+                case ResultFromServer.Yes:
+                    //     _itemsCollection.UpdateItem(item);
+
+                    if (!_users.CurrentUser.IsReading(item))
+                    {
+                        _users.CurrentUser.MyItems.Add(item.Guid);
+                        item.BorrowedCopies++;
+                        if (_users.CurrentUser.IsAdmin)
+                            _itemDetailsPageAdmin.BorrowReturnSucceeded(true);
+                        else
+                            _itemDetailsPage.BorrowReturnSucceeded(true);
+
+                        if (item is Book)
+                            _mainView.ShowMessage("You borrowed the book");
+                        else
+                            _mainView.ShowMessage("You borrowed the magazine");
+
+
+                    }
+                    else
+                    {
+                        _users.CurrentUser.MyItems.Remove(item.Guid);
+                        item.BorrowedCopies--;
+                        if (_users.CurrentUser.IsAdmin)
+                            _itemDetailsPageAdmin.BorrowReturnSucceeded(false);
+                        else
+                            _itemDetailsPage.BorrowReturnSucceeded(false);
+
+
+                        if (item is Book)
+                            _mainView.ShowMessage("You returned a book");
+                        else
+                            _mainView.ShowMessage("You returned a magazine");
+
+                    }
+
+
+
+                    break;
+                case ResultFromServer.No:
+                    _mainView.ShowMessage("This item does not exist");
+                    break;
+                case ResultFromServer.ConnectionFailed:
+                    _mainView.ShowMessage("Connection failed");
+                    break;
+                default:
+                    break;
+            }
+
+        }
+
 
         private static async void _itemDetailsPageAdmin_Delete(object sender, ItemEventArgs e)
         {
@@ -148,7 +223,7 @@ namespace Presenter
 
         private static async void _itemDetailsPageAdmin_UpdateItem(object sender, ItemEventArgs e)
         {
-            switch (await _itemsCollection.UpdateInServer(e.Item))
+            switch (await _itemsCollection.UpdateItemInServer(e.Item))
             {
                 case ResultFromServer.Yes:
                     _itemsCollection.UpdateItem(e.Item);
@@ -157,7 +232,7 @@ namespace Presenter
                         _mainView.ShowMessage("Book updated");
                     else
                         _mainView.ShowMessage("Magazine updated");
-                    _itemDetailsPageAdmin.OperationSucceeded();
+                    _itemDetailsPageAdmin.SaveSucceeded();
                     break;
                 case ResultFromServer.No:
                     _mainView.ShowMessage("This item does not exist");
@@ -190,12 +265,12 @@ namespace Presenter
             if (_users.CurrentUser.IsAdmin)
             {
                 _itemListPage.SetItemDetailsPage(true);
-                _itemDetailsPageAdmin.SetContent(e.Item);
+                _itemDetailsPageAdmin.SetContent(e.Item, _users.CurrentUser.IsReading(e.Item));
             }
             else
             {
                 _itemListPage.SetItemDetailsPage(false);
-                _itemDetailsPage.SetContent(e.Item);
+                _itemDetailsPage.SetContent(e.Item, _users.CurrentUser.IsReading(e.Item));
             }
         }
 
@@ -247,7 +322,13 @@ namespace Presenter
             set
             {
                 _itemDetailsPage = value;
+                _itemDetailsPage.Borrow += _itemDetailsPage_Borrow;
             }
+        }
+
+        private static void _itemDetailsPage_Borrow(object sender, ItemEventArgs e)
+        {
+            BorrowReturnItem(e.Item);
         }
 
         private static IRegisterView _registerView;
@@ -365,12 +446,18 @@ namespace Presenter
 
         private static void _mainView_MyMagazinesClicked(object sender, EventArgs e)
         {
+            var items = new List<AbstractItem>(_itemsCollection.GetJournals().Where(item => _users.CurrentUser.MyItems.Contains(item.Guid)));
             _itemListPage.IsBookList = false;
+            _mainView.SetCounter = items.Count;
+            _itemListPage.SourceList = items;
         }
 
         private static void _mainView_MyBooksClicked(object sender, EventArgs e)
         {
+            var items = new List<AbstractItem>(_itemsCollection.GetBooks().Where(item => _users.CurrentUser.MyItems.Contains(item.Guid)));
             _itemListPage.IsBookList = true;
+            _mainView.SetCounter = items.Count;
+            _itemListPage.SourceList = items;
         }
 
         private static void _mainView_MagazinesClicked(object sender, EventArgs e)
@@ -392,32 +479,41 @@ namespace Presenter
 
         private async static void _loginView_Submit(object sender, UserEventArgs e)
         {
+            _users.CurrentUser = new User();
             Task<ResultFromServer> task = _users.Authentication(e.User);
 
             switch (await task)
             {
                 case ResultFromServer.Yes:
 
-                    var result = await _itemsCollection.LoadDataFromServer();
+                    var result = await _itemsCollection.GetItemsFromServer();
                     if (result == ResultFromServer.Yes)
                     {
-                        if (!_users.CurrentUser.IsAdmin)
-                        {
-                            LoginView.SetMainView();
-                            _mainView.SetUserName(e.User.Username);
-                        }
-                        else
-                        {
-                            Task<ResultFromServer> task2 = _users.GetUsersFromServer();
 
-                            if (await task2 == ResultFromServer.Yes)
+                        Task<ResultFromServer> task2 = _users.GetUserItemsGuid(_users.CurrentUser);
+                        if (await task2 == ResultFromServer.Yes)
+                        {
+
+                            if (!_users.CurrentUser.IsAdmin)
                             {
                                 LoginView.SetMainView();
-                                _mainView.SetUserName(_users.CurrentUser.Username);
+                                _mainView.SetUserName(e.User.Username);
                             }
                             else
-                                LoginView.StringFromServer = "Error retriving users from server";
+                            {
+                                Task<ResultFromServer> task3 = _users.GetUsersFromServer();
+
+                                if (await task3 == ResultFromServer.Yes)
+                                {
+                                    LoginView.SetMainView();
+                                    _mainView.SetUserName(_users.CurrentUser.Username);
+                                }
+                                else
+                                    LoginView.StringFromServer = "Error retriving users from server";
+                            }
+
                         }
+                        LoginView.StringFromServer = "Error retriving user items from server";
                     }
                     else
                         LoginView.StringFromServer = "Could not connect to server db";

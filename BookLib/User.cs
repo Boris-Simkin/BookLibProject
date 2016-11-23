@@ -14,5 +14,21 @@ namespace Model
         public string Password { get; set; }
         public bool IsAdmin { get; set; }
         public List<Guid> MyItems { get; set; }
+
+        public User()
+        {
+            MyItems = new List<Guid>();
+        }
+
+        /// <summary>
+        /// Checking if the user is reading specific item
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public bool IsReading(AbstractItem item)
+        {
+            return MyItems.Contains(item.Guid);
+        }
+
     }
 }

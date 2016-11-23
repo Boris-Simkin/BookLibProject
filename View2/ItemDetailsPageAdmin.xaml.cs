@@ -29,6 +29,7 @@ namespace View
 
         public event EventHandler<ItemEventArgs> Save;
         public event EventHandler<ItemEventArgs> Delete;
+        public event EventHandler<ItemEventArgs> Borrow;
 
         public ItemDetailsPageAdmin()
         {
@@ -39,19 +40,40 @@ namespace View
         private void ItemDetailsPageAdmin_Loaded(object sender, RoutedEventArgs e)
         {
             saveBtn.IsEnabled = false;
+            DataContext = _item;
         }
 
-        public void SetContent(AbstractItem item)
+        private void SetReading(bool isReading)
+        {
+            if (isReading)
+            {
+                borrowBtn.Content = "Return";
+                // borrowedСopiesTxtBlock.Text = (int.Parse(borrowedСopiesTxtBlock.Text) + 1).ToString();
+            }
+            else
+            {
+                borrowBtn.Content = "Borrow";
+                //    borrowedСopiesTxtBlock.Text = (int.Parse(borrowedСopiesTxtBlock.Text) - 1).ToString();
+            }
+        }
+
+
+        public void SetContent(AbstractItem item, bool isReading)
         {
             _item = item;
-            string defaultImageLocation;
+
+            if (item.BorrowedCopies >= item.CopyNumber && !isReading)
+            {
+                noFreeCopiesTxtBlk.Visibility = Visibility.Visible;
+                borrowBtn.IsEnabled = false;
+            }
             string category;
             if (item is Book)
             {
                 categoryCombobox.ItemsSource = Enum.GetValues(typeof(Book.BookCategory));
                 categoryCombobox.SelectedItem = ((Book)item).Category;
                 category = ((Book)item).Category.ToString();
-                defaultImageLocation = "Assets/DefaultBookImage.png";
+                defaultCoverImage.Source = defaultBookImage.Source;
                 deleteBtn.Content = "Delete book";
             }
             else
@@ -59,25 +81,23 @@ namespace View
                 categoryCombobox.ItemsSource = Enum.GetValues(typeof(Journal.JournalCategory));
                 categoryCombobox.SelectedItem = ((Journal)item).Category;
                 category = ((Journal)item).Category.ToString();
-                defaultImageLocation = "Assets/DefaultMagazineImage.png";
+                defaultCoverImage.Source = defaultMagazineImage.Source;
                 deleteBtn.Content = "Delete magazine";
             }
 
-            this.defaultCoverImage.Source =
-                new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri($"ms-appx:///{defaultImageLocation}"));
-            if (item.CoverImage != null && item.CoverImage != string.Empty)
-            {
-                image.Source = new Windows.UI.Xaml.Media.Imaging.BitmapImage(new System.Uri(item.CoverImage));
+            if (item.CoverImage != null)
                 coverImageTxtBox.Text = item.CoverImage;
-            }
+
             GuidTxtBlk.Text = item.Guid.ToString();
             subCategoryTxtBox.Text = item.SubCategory;
-            datePicker.Date = (DateTimeOffset)item.Date;
+            datePicker.MinYear = new DateTime(100, 1, 1);
             datePicker.MaxYear = DateTime.Today;
+            datePicker.Date = (DateTimeOffset)item.Date;
             copyNumberTxtBox.Text = item.CopyNumber.ToString();
             itemNameTxtBox.Text = item.ItemName;
             borrowedСopiesTxtBlock.Text = item.BorrowedCopies.ToString();
 
+            SetReading(isReading);
         }
 
         private void copyNumberTxtBox_KeyDown(object sender, KeyRoutedEventArgs e)
@@ -89,8 +109,9 @@ namespace View
         {
             int number;
             bool result = int.TryParse(copyNumberTxtBox.Text, out number);
-            if (!result || number < 1)
-                copyNumberTxtBox.Text = "1";
+            if (!result || (number < 1 || number < _item.BorrowedCopies))
+                copyNumberTxtBox.Text = _item.BorrowedCopies > 1 ? _item.BorrowedCopies.ToString() : "1";
+
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
@@ -99,7 +120,9 @@ namespace View
 
         private void borrowBtn_Click(object sender, RoutedEventArgs e)
         {
-
+            borrowBtn.IsEnabled = false;
+            if (Borrow != null)
+                Borrow(this, new ItemEventArgs(_item));
         }
 
         private async void deleteBtn_Click(object sender, RoutedEventArgs e)
@@ -116,9 +139,26 @@ namespace View
                 Delete(this, new ItemEventArgs(_item));
         }
 
-        public void OperationSucceeded()
+        public void SaveSucceeded()
         {
             saveBtn.IsEnabled = false;
+
+            if (_item.CopyNumber > _item.BorrowedCopies)
+            {
+                noFreeCopiesTxtBlk.Visibility = Visibility.Collapsed;
+                borrowBtn.IsEnabled = true;
+            }
+
+        }
+
+        public void BorrowReturnSucceeded(bool isReading)
+        {
+            borrowBtn.IsEnabled = true;
+            if (isReading)
+                borrowedСopiesTxtBlock.Text = (int.Parse(borrowedСopiesTxtBlock.Text) + 1).ToString();
+            else
+                borrowedСopiesTxtBlock.Text = (int.Parse(borrowedСopiesTxtBlock.Text) - 1).ToString();
+            SetReading(isReading);
         }
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
@@ -139,13 +179,11 @@ namespace View
             if (Save != null)
                 Save(this, new ItemEventArgs(_item));
 
-            //saveBtn.IsEnabled = false;
         }
 
         private void PropChanged(object sender, TextChangedEventArgs e)
         {
             saveBtn.IsEnabled = itemNameTxtBox.Text != string.Empty;
-                
         }
 
         private void PropChanged(object sender, SelectionChangedEventArgs e)

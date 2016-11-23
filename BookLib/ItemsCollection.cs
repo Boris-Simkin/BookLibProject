@@ -14,11 +14,9 @@ namespace Model
     public class ItemsCollection : IItemsCollection
     {
 
-        public ItemsCollection()
-        {
-        }
+        public ItemsCollection() { }
 
-        public List<AbstractItem> _items = new List<AbstractItem>();
+        private List<AbstractItem> _items = new List<AbstractItem>();
 
         public bool IsEmpty()
         {
@@ -30,10 +28,10 @@ namespace Model
             _items.Add(item);
         }
 
-        public AbstractItem GetItem()
-        {
-            throw new NotImplementedException();
-        }
+        //public AbstractItem GetItem()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         public List<AbstractItem> SearchByName(bool IsBook, string itemName)
         {
@@ -41,7 +39,6 @@ namespace Model
                 return new List<AbstractItem>(_items.Where(p => p.ItemName.ToLower().Contains(itemName.ToLower()) && p is Book));
             else
                 return new List<AbstractItem>(_items.Where(p => p.ItemName.ToLower().Contains(itemName.ToLower()) && p is Journal));
-
         }
 
         public List<AbstractItem> AdvancedSearch(AbstractItem item)
@@ -73,6 +70,19 @@ namespace Model
             selectedItem = newitem;
         }
 
+        /// <summary>
+        /// Return the items which borrowed by user
+        /// </summary>
+        /// <param name="user"></param>
+        public void ReturnAllUserItems(User user)
+        {
+            //Decrease by one the BorrowedCopies property in each item which was owned by the user
+            foreach (var item in _items.Where(item => user.MyItems.Contains(item.Guid)))
+                item.BorrowedCopies--;
+            //Clear the list of user's items
+            user.MyItems.Clear();
+        }
+
         public void DeleteItem(AbstractItem item)
         {
             _items.Remove(item);
@@ -83,14 +93,39 @@ namespace Model
             _items.Clear();
         }
 
-        public async Task<ResultFromServer> UpdateInServer(AbstractItem item)
+        #region Server management methods
+        /// <summary>
+        /// Borrow or return the item of the user on the server
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="item"></param>
+        /// <param name="borrow">Borrow or return</param>
+        /// <returns></returns>
+        public async Task<ResultFromServer> BorrowReturnServer(User user, AbstractItem item, bool borrow)
+        {
+            var values = new Dictionary<string, string>();
+            values.Add("Guid", item.Guid.ToString());
+            values.Add("Username", user.Username);
+
+            if (borrow)
+                return await Server.Connect("Borrow.php", values);
+            else
+                return await Server.Connect("Return.php", values);
+        }
+
+        /// <summary>
+        /// Update all the specific item in the server
+        /// </summary>
+        /// <param name="item">The item to update</param>
+        /// <returns></returns>
+        public async Task<ResultFromServer> UpdateItemInServer(AbstractItem item)
         {
             var values = new Dictionary<string, string>();
             values.Add("BookName", item.ItemName);
             values.Add("Date", ((DateTimeOffset)item.Date).ToString("d"));
             values.Add("CopyNumber", item.CopyNumber.ToString());
             values.Add("Guid", item.Guid.ToString());
-            //send the url encrypted
+            // The url should be encrypted, otherwise the server will prohibit store links
             values.Add("CoverImage", Crypt.Encrypt("boris", item.CoverImage));
             if (item is Book)
                 values.Add("Category", ((Book)item).Category.ToString());
@@ -102,7 +137,11 @@ namespace Model
             return await Server.Connect("UpdateBook.php", values);
         }
 
-
+        /// <summary>
+        /// Delete an item from the server
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public async Task<ResultFromServer> DeleteFromServer(AbstractItem item)
         {
             var values = new Dictionary<string, string>();
@@ -110,6 +149,11 @@ namespace Model
             return await Server.Connect("DeleteBook.php", values);
         }
 
+        /// <summary>
+        /// Add item to the server
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public async Task<ResultFromServer> AddItemToServer(AbstractItem item)
         {
             var values = new Dictionary<string, string>();
@@ -117,7 +161,7 @@ namespace Model
             values.Add("Date", ((DateTimeOffset)item.Date).ToString("d"));
             values.Add("CopyNumber", item.CopyNumber.ToString());
             values.Add("Guid", item.Guid.ToString());
-            //send the url encrypted
+            // The url should be encrypted, otherwise the server will prohibit store links
             values.Add("CoverImage", Crypt.Encrypt("boris", item.CoverImage));
             if (item is Book)
                 values.Add("Category", ((Book)item).Category.ToString());
@@ -126,14 +170,13 @@ namespace Model
             values.Add("SubCategory", item.SubCategory);
             values.Add("BorrowedCopies", item.BorrowedCopies.ToString());
 
-            //var result = await Server.Connect("AddBook.php", values);
             if (await Server.Connect("AddBook.php", values) != ResultFromServer.Yes)
                 return ResultFromServer.ConnectionFailed;
 
             return ResultFromServer.Yes;
         }
 
-        public async Task<ResultFromServer> LoadDataFromServer()
+        public async Task<ResultFromServer> GetItemsFromServer()
         {
             var result = await Server.Connect("GetBooks.php");
             if (result != ResultFromServer.ConnectionFailed)
@@ -168,7 +211,7 @@ namespace Model
             }
             return result;
         }
-
+        #endregion
 
     }
 }

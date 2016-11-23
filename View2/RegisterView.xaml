@@ -44,6 +44,7 @@
             <TextBlock Grid.Column="1" TextWrapping="Wrap"    TextAlignment="Center" Text="First Name:" Margin="0,85,0,279" HorizontalAlignment="Left" FontSize="14.667" Grid.Row="1" Grid.ColumnSpan="2" IsHitTestVisible="False" />
             <TextBox Grid.Column="1" x:Name="lastNameTxtBox"   TextWrapping="Wrap" Text="" VerticalAlignment="Top" Height="30" FontSize="16" TextChanged="textBox_TextChanged" Margin="0,185,0,0" Grid.Row="1" HorizontalAlignment="Left" Width="231" Grid.ColumnSpan="2"/>
             <TextBlock Grid.Column="1" TextWrapping="Wrap"    TextAlignment="Center" Text="Last Name:" Margin="0,170,0,194" HorizontalAlignment="Left" FontSize="14.667" Grid.Row="1" Grid.ColumnSpan="2" IsHitTestVisible="False" />
+            <ProgressRing x:Name="progressRing" Grid.Column="1" HorizontalAlignment="Left" Margin="370,230,0,0" Grid.Row="1" VerticalAlignment="Top" Height="79" Width="100" Foreground="White"/>
         </Grid>
         <TextBlock Grid.Row="0" FontSize="66.667" TextAlignment="Center" Text="Registration" HorizontalAlignment="Left" Margin="270,35,0,0" Foreground="Black"/>
         <TextBlock Grid.Row="2" x:Name="stringFromServer" FontSize="21.333" Foreground="#FFDE0000" TextAlignment="Center" Text=""/>

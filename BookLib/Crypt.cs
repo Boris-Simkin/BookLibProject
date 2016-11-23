@@ -15,6 +15,8 @@ namespace Model
         /// <returns>Base64 encoded string</returns>
         public static string Encrypt(string key, string value)
         {
+            if (value == string.Empty)
+                return string.Empty;
             // Private key has to be exactly 16 characters
             if (key.Length > 16)
             {
@@ -59,6 +61,9 @@ namespace Model
         /// <returns>Original value</returns>
         public static string Decrypt(string key, string value)
         {
+            if (value == string.Empty)
+                return string.Empty;
+
             if (key.Length > 16)
             {
                 key = key.Substring(0, 16);
