@@ -115,7 +115,7 @@ namespace View
         }
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            BL.ItemDetailsPageAdmin = this;
+            BL.Instance.ItemDetailsPageAdmin = this;
         }
 
         private void borrowBtn_Click(object sender, RoutedEventArgs e)

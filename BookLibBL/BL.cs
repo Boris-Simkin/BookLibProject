@@ -9,19 +9,27 @@ using Windows.UI.Xaml.Controls;
 
 namespace BookLibBL
 {
-    static public class BL
+    public class BL
     {
-        private static readonly IItemsCollection _itemsCollection;
-        private static Users _users = new Users();
+        public static readonly BL _instance = new BL();
+        public static BL Instance { get { return _instance; } }
 
-        private static IItemDetailsPage _itemDetailsPage;
-        private static IItemListPage _itemListPage;
-        private static IItemDetailsPageAdmin _itemDetailsPageAdmin;
-        private static IAddNewItemPage _addNewItemPage;
-        private static IAdvancedSearchPage _advancedSearchPage;
-        private static IManageUsers _manageUsers;
+        BL()
+        {
+            _itemsCollection = new ItemsCollection();
+        }
 
-        public static IManageUsers ManageUsersPage
+        private readonly IItemsCollection _itemsCollection;
+        private Users _users = new Users();
+
+        private IItemDetailsPage _itemDetailsPage;
+        private IItemListPage _itemListPage;
+        private IItemDetailsPageAdmin _itemDetailsPageAdmin;
+        private IAddNewItemPage _addNewItemPage;
+        private IAdvancedSearchPage _advancedSearchPage;
+        private IManageUsers _manageUsers;
+
+        public IManageUsers ManageUsersPage
         {
             get
             {
@@ -36,14 +44,14 @@ namespace BookLibBL
             }
         }
 
-        private static void _manageUsers_PageLoaded(object sender, EventArgs e)
+        private void _manageUsers_PageLoaded(object sender, EventArgs e)
         {
             //Loading users except the administrators
             var regularUsers = _users.GetUsers().Where(user => user.IsAdmin == false);
             ManageUsersPage.SourceList = new List<User>(regularUsers);
         }
 
-        private async static void _manageUsers_MakeAdmin(object sender, UserEventArgs e)
+        private async void _manageUsers_MakeAdmin(object sender, UserEventArgs e)
         {
             Task<ResultFromServer> task = _users.MakeUserAdmin(e.User);
 
@@ -65,7 +73,7 @@ namespace BookLibBL
             }
         }
 
-        private async static void _manageUsers_DeleteUser(object sender, UserEventArgs e)
+        private async void _manageUsers_DeleteUser(object sender, UserEventArgs e)
         {
             await _users.GetUserItemsGuid(e.User);
             Task<ResultFromServer> task = _users.RemoveUserFromServer(e.User);
@@ -90,7 +98,7 @@ namespace BookLibBL
             }
         }
 
-        public static IAdvancedSearchPage AdvancedSearchPage
+        public IAdvancedSearchPage AdvancedSearchPage
         {
             get
             {
@@ -103,7 +111,7 @@ namespace BookLibBL
             }
         }
 
-        private static void _advancedSearchPage_Submit(object sender, ItemEventArgs e)
+        private void _advancedSearchPage_Submit(object sender, ItemEventArgs e)
         {
             List<AbstractItem> result = _itemsCollection.AdvancedSearch(e.Item);
 
@@ -112,7 +120,7 @@ namespace BookLibBL
             _mainView.SetCounter = result.Count;
         }
 
-        public static IItemDetailsPageAdmin ItemDetailsPageAdmin
+        public IItemDetailsPageAdmin ItemDetailsPageAdmin
         {
             get
             {
@@ -127,12 +135,12 @@ namespace BookLibBL
             }
         }
 
-        private static void _itemDetailsPageAdmin_Borrow(object sender, ItemEventArgs e)
+        private void _itemDetailsPageAdmin_Borrow(object sender, ItemEventArgs e)
         {
             BorrowReturnItem(e.Item);
         }
 
-        private async static void BorrowReturnItem(AbstractItem item)
+        private async void BorrowReturnItem(AbstractItem item)
         {
             Task<ResultFromServer> task;
             task = _itemsCollection.BorrowReturnServer(_users.CurrentUser, item, !_users.CurrentUser.IsReading(item));
@@ -187,7 +195,7 @@ namespace BookLibBL
 
         }
 
-        private static async void _itemDetailsPageAdmin_Delete(object sender, ItemEventArgs e)
+        private async void _itemDetailsPageAdmin_Delete(object sender, ItemEventArgs e)
         {
             if (e.Item.BorrowedCopies > 0 )
             {
@@ -215,7 +223,7 @@ namespace BookLibBL
 
         }
 
-        private static async void _itemDetailsPageAdmin_UpdateItem(object sender, ItemEventArgs e)
+        private async void _itemDetailsPageAdmin_UpdateItem(object sender, ItemEventArgs e)
         {
             switch (await _itemsCollection.UpdateItemInServer(e.Item))
             {
@@ -239,7 +247,7 @@ namespace BookLibBL
             }
         }
 
-        public static IItemListPage ItemListPage
+        public IItemListPage ItemListPage
         {
             get
             {
@@ -252,7 +260,7 @@ namespace BookLibBL
             }
         }
 
-        private static void _itemListPage_ItemClicked(object sender, ItemEventArgs e)
+        private void _itemListPage_ItemClicked(object sender, ItemEventArgs e)
         {
             _mainView.HideToolBar();
             _mainView.ClearTitle();
@@ -268,7 +276,7 @@ namespace BookLibBL
             }
         }
 
-        public static IAddNewItemPage AddNewItemPage
+        public IAddNewItemPage AddNewItemPage
         {
             get
             {
@@ -281,7 +289,7 @@ namespace BookLibBL
             }
         }
 
-        private async static void AddNewItemPage_Submit(object sender, ItemEventArgs e)
+        private async void AddNewItemPage_Submit(object sender, ItemEventArgs e)
         {
             ResultFromServer result = await _itemsCollection.AddItemToServer(e.Item);
 
@@ -305,7 +313,7 @@ namespace BookLibBL
 
         }
 
-        public static IItemDetailsPage ItemDetailsPage
+        public IItemDetailsPage ItemDetailsPage
         {
             get
             {
@@ -318,13 +326,13 @@ namespace BookLibBL
             }
         }
 
-        private static void _itemDetailsPage_Borrow(object sender, ItemEventArgs e)
+        private void _itemDetailsPage_Borrow(object sender, ItemEventArgs e)
         {
             BorrowReturnItem(e.Item);
         }
 
-        private static IRegisterView _registerView;
-        public static IRegisterView RegisterView
+        private IRegisterView _registerView;
+        public IRegisterView RegisterView
         {
             get
             {
@@ -338,7 +346,7 @@ namespace BookLibBL
             }
         }
 
-        private async static void _registerView_Submit(object sender, UserEventArgs e)
+        private async void _registerView_Submit(object sender, UserEventArgs e)
         {
             Task<ResultFromServer> task = _users.Registration(e.User);
             switch (await task)
@@ -359,13 +367,13 @@ namespace BookLibBL
             _registerView.RequestFinished();
         }
 
-        private static void _registerView_GoBack(object sender, EventArgs e)
+        private void _registerView_GoBack(object sender, EventArgs e)
         {
             _registerView.SetPreviusView();
         }
 
-        private static ILoginView _loginView;
-        public static ILoginView LoginView
+        private ILoginView _loginView;
+        public ILoginView LoginView
         {
             get
             {
@@ -379,13 +387,13 @@ namespace BookLibBL
             }
         }
 
-        private static void _loginView_registerBtnClick(object sender, EventArgs e)
+        private void _loginView_registerBtnClick(object sender, EventArgs e)
         {
             _loginView.SetRegistrationView();
         }
 
-        private static IMainView _mainView;
-        public static IMainView MainView
+        private IMainView _mainView;
+        public IMainView MainView
         {
             get
             {
@@ -405,19 +413,19 @@ namespace BookLibBL
             }
         }
 
-        private static void _mainView_MainViewLoaded(object sender, EventArgs e)
+        private void _mainView_MainViewLoaded(object sender, EventArgs e)
         {
             MainViewBookList();
         }
 
-        private static void _mainView_Logout(object sender, EventArgs e)
+        private void _mainView_Logout(object sender, EventArgs e)
         {
             _loginView.Submit -= _loginView_Submit;
             _itemsCollection.ClearList();
             _users.ClearList();
         }
 
-        private static void _mainView_SearchTextChanged(object sender, StringEventArgs e)
+        private void _mainView_SearchTextChanged(object sender, StringEventArgs e)
         {
             var newList = _itemsCollection.SearchByName(_itemListPage.ListType, e.String, _users.CurrentUser);
 
@@ -446,7 +454,7 @@ namespace BookLibBL
             }
         }
 
-        private static void _mainView_MyMagazinesClicked(object sender, EventArgs e)
+        private void _mainView_MyMagazinesClicked(object sender, EventArgs e)
         {
             var items = _itemsCollection.GetUserJournals(_users.CurrentUser);
             _itemListPage.ListType = EnumListType.MyMagazines;
@@ -454,7 +462,7 @@ namespace BookLibBL
             _itemListPage.SourceList = items;
         }
 
-        private static void _mainView_MyBooksClicked(object sender, EventArgs e)
+        private void _mainView_MyBooksClicked(object sender, EventArgs e)
         {
             var items = _itemsCollection.GetUserBooks(_users.CurrentUser);
             _itemListPage.ListType = EnumListType.MyBooks;
@@ -462,7 +470,7 @@ namespace BookLibBL
             _itemListPage.SourceList = items;
         }
 
-        private static void _mainView_MagazinesClicked(object sender, EventArgs e)
+        private void _mainView_MagazinesClicked(object sender, EventArgs e)
         {
             var items = _itemsCollection.GetJournals();
             _itemListPage.ListType = EnumListType.Magazines;
@@ -470,12 +478,12 @@ namespace BookLibBL
             _itemListPage.SourceList = items;
         }
 
-        private static void _mainView_BooksClicked(object sender, EventArgs e)
+        private void _mainView_BooksClicked(object sender, EventArgs e)
         {
             MainViewBookList();
         }
 
-        private static void MainViewBookList()
+        private void MainViewBookList()
         {
             var items = _itemsCollection.GetBooks();
             _itemListPage.ListType = EnumListType.Books;
@@ -484,7 +492,7 @@ namespace BookLibBL
         }
 
 
-        private async static void _loginView_Submit(object sender, UserEventArgs e)
+        private async void _loginView_Submit(object sender, UserEventArgs e)
         {
             _users.CurrentUser = new User();
             Task<ResultFromServer> task = _users.Authentication(e.User);
@@ -538,9 +546,6 @@ namespace BookLibBL
             LoginView.RequestFinished();
         }
 
-        static BL()
-        {
-            _itemsCollection = new ItemsCollection();
-        }
+
     }
 }

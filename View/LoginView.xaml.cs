@@ -33,7 +33,7 @@ namespace View
 
         private void LoginView_Loaded(object sender, RoutedEventArgs e)
         {
-             BL.LoginView = this;
+            BL.Instance.LoginView = this;
         }
 
         public string StringFromServer { set { stringFromServer.Text = value; } }

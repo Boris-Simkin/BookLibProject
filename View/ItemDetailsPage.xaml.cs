@@ -87,7 +87,7 @@ namespace View
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            BL.ItemDetailsPage = this;
+            BL.Instance.ItemDetailsPage = this;
         }
 
         private void borrowBtn_Click(object sender, RoutedEventArgs e)

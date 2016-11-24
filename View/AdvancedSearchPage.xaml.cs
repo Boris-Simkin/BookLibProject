@@ -36,7 +36,7 @@ namespace View
 
         private void AdvancedSearchPage_Loaded(object sender, RoutedEventArgs e)
         {
-            BL.AdvancedSearchPage = this;
+            BL.Instance.AdvancedSearchPage = this;
 
             searchBtn.IsEnabled = false;
             datePicker.MinYear = new DateTime(100, 1, 1);

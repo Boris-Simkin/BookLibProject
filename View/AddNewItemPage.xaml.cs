@@ -37,7 +37,7 @@ namespace View
 
         private void AddNewItemPage_Loaded(object sender, RoutedEventArgs e)
         {
-            BL.AddNewItemPage = this;
+            BL.Instance.AddNewItemPage = this;
             typeCombobox.Items.Add("Books");
             typeCombobox.Items.Add("Magazines");
             typeCombobox.SelectedIndex = 0;

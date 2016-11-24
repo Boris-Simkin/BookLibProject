@@ -55,7 +55,7 @@ namespace View
         private void ManageUsersPage_Loaded(object sender, RoutedEventArgs e)
         {
             DataContext = this;
-            BL.ManageUsersPage = this;
+            BL.Instance.ManageUsersPage = this;
             if (PageLoaded != null)
                 PageLoaded(this, EventArgs.Empty);
 

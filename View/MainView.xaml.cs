@@ -79,7 +79,7 @@ namespace View
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            BL.MainView = this;
+            BL.Instance.MainView = this;
         }
 
         private void MainView_Loaded(object sender, RoutedEventArgs e)

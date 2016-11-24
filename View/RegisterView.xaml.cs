@@ -33,7 +33,7 @@ namespace View
 
         private void RegisterView_Loaded(object sender, RoutedEventArgs e)
         {
-            BL.RegisterView = this;
+            BL.Instance.RegisterView = this;
         }
 
         public event EventHandler GoBack;

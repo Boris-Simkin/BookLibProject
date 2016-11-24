@@ -55,7 +55,7 @@ namespace View
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            BL.ItemListPage = this;
+            BL.Instance.ItemListPage = this;
         }
 
         private void itemsGridView_ItemClick(object sender, ItemClickEventArgs e)
