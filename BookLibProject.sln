@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "BookLib\Model.csproj", "{56B8E899-DC36-4CF5-A8FE-04D02A96EB67}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Model", "Model\Model.csproj", "{56B8E899-DC36-4CF5-A8FE-04D02A96EB67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "View", "View2\View.csproj", "{C64DE892-4A05-401E-A85B-5C81C3135E0F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "View", "View\View.csproj", "{C64DE892-4A05-401E-A85B-5C81C3135E0F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presenter", "Presenter2\Presenter.csproj", "{9FDDB525-B3A8-49AA-B6D9-198C25AE8588}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookLibBL", "BookLibBL\BookLibBL.csproj", "{9FDDB525-B3A8-49AA-B6D9-198C25AE8588}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
