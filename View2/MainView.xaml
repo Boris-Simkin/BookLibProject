@@ -73,6 +73,7 @@
                     </Style>
                 </StackPanel.Resources>
                 <Button x:Name="searchToolsBtn" Content="Search tools" Margin="0,20,45,0" FontSize="24" Click="searchToolsBtn_Click"/>
+                
                 <Grid>
                     <TextBlock x:Name="searchTextBlk" Text="Search by name" Margin="0,40,66,9" Width="189" FontSize="26.667" Foreground="Gray" IsHitTestVisible="False" IsDoubleTapEnabled="False" IsHoldingEnabled="False" IsRightTapEnabled="False"/>
                     <TextBox x:Name="searchTxtBox" Grid.Row="0" Margin="0,30,25,0" TextWrapping="Wrap" Text="" VerticalAlignment="Top" FontSize="26.667" HorizontalAlignment="Right" Width="245" Foreground="Black" TextChanged="searchTxtBox_TextChanged" Background="{x:Null}"/>

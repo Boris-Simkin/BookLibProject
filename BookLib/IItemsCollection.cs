@@ -15,8 +15,10 @@ namespace Model
         Task<ResultFromServer> UpdateItemInServer(AbstractItem item);
         Task<ResultFromServer> BorrowReturnServer(User user, AbstractItem item, bool borrow);
         #endregion
-        List<AbstractItem> SearchByName(bool IsBook, string itemName);
+        List<AbstractItem> SearchByName(EnumListType listType, string itemName, User user);
         List<AbstractItem> AdvancedSearch(AbstractItem item);
+        List<AbstractItem> GetUserJournals(User user);
+        List<AbstractItem> GetUserBooks(User user);
         List<AbstractItem> GetJournals();
         List<AbstractItem> GetBooks();
         void AddItem(AbstractItem item);

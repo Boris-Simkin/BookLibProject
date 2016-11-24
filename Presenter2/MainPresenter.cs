@@ -268,8 +268,6 @@ namespace Presenter
             }
         }
 
-
-
         public static IAddNewItemPage AddNewItemPage
         {
             get
@@ -396,6 +394,7 @@ namespace Presenter
             set
             {
                 _mainView = value;
+                _mainView.MainViewLoaded += _mainView_MainViewLoaded;
                 _mainView.IsAdmin(_users.CurrentUser.IsAdmin);
                 _mainView.BooksClicked += _mainView_BooksClicked;
                 _mainView.MagazinesClicked += _mainView_MagazinesClicked;
@@ -404,6 +403,11 @@ namespace Presenter
                 _mainView.SearchTextChanged += _mainView_SearchTextChanged;
                 _mainView.Logout += _mainView_Logout;
             }
+        }
+
+        private static void _mainView_MainViewLoaded(object sender, EventArgs e)
+        {
+            MainViewBookList();
         }
 
         private static void _mainView_Logout(object sender, EventArgs e)
@@ -415,7 +419,8 @@ namespace Presenter
 
         private static void _mainView_SearchTextChanged(object sender, StringEventArgs e)
         {
-            var newList = _itemsCollection.SearchByName(_itemListPage.IsBookList, e.String);
+            var newList = _itemsCollection.SearchByName(_itemListPage.ListType, e.String, _users.CurrentUser);
+
             if (!_itemListPage.SourceList.SequenceEqual(newList))
             {
                 _mainView.SetCounter = newList.Count;
@@ -423,25 +428,36 @@ namespace Presenter
             }
             if (e.String == string.Empty)
             {
-                if (_itemListPage.IsBookList)
-                    _itemListPage.SourceList = _itemsCollection.GetBooks();
-                else
-                    _itemListPage.SourceList = _itemsCollection.GetJournals();
+                switch (_itemListPage.ListType)
+                {
+                    case EnumListType.Books:
+                        _itemListPage.SourceList = _itemsCollection.GetBooks();
+                        break;
+                    case EnumListType.Magazines:
+                        _itemListPage.SourceList = _itemsCollection.GetJournals();
+                        break;
+                    case EnumListType.MyBooks:
+                        _itemListPage.SourceList = _itemsCollection.GetUserBooks(_users.CurrentUser);
+                        break;
+                    case EnumListType.MyMagazines:
+                        _itemListPage.SourceList = _itemsCollection.GetUserJournals(_users.CurrentUser);
+                        break;
+                }
             }
         }
 
         private static void _mainView_MyMagazinesClicked(object sender, EventArgs e)
         {
-            var items = new List<AbstractItem>(_itemsCollection.GetJournals().Where(item => _users.CurrentUser.MyItems.Contains(item.Guid)));
-            _itemListPage.IsBookList = false;
+            var items = _itemsCollection.GetUserJournals(_users.CurrentUser);
+            _itemListPage.ListType = EnumListType.MyMagazines;
             _mainView.SetCounter = items.Count;
             _itemListPage.SourceList = items;
         }
 
         private static void _mainView_MyBooksClicked(object sender, EventArgs e)
         {
-            var items = new List<AbstractItem>(_itemsCollection.GetBooks().Where(item => _users.CurrentUser.MyItems.Contains(item.Guid)));
-            _itemListPage.IsBookList = true;
+            var items = _itemsCollection.GetUserBooks(_users.CurrentUser);
+            _itemListPage.ListType = EnumListType.MyBooks;
             _mainView.SetCounter = items.Count;
             _itemListPage.SourceList = items;
         }
@@ -449,15 +465,20 @@ namespace Presenter
         private static void _mainView_MagazinesClicked(object sender, EventArgs e)
         {
             var items = _itemsCollection.GetJournals();
-            _itemListPage.IsBookList = false;
+            _itemListPage.ListType = EnumListType.Magazines;
             _mainView.SetCounter = items.Count;
             _itemListPage.SourceList = items;
         }
 
         private static void _mainView_BooksClicked(object sender, EventArgs e)
         {
+            MainViewBookList();
+        }
+
+        private static void MainViewBookList()
+        {
             var items = _itemsCollection.GetBooks();
-            _itemListPage.IsBookList = true;
+            _itemListPage.ListType = EnumListType.Books;
             _mainView.SetCounter = items.Count;
             _itemListPage.SourceList = items;
         }

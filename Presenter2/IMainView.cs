@@ -20,6 +20,7 @@ namespace Presenter
         int SetCounter { set; }
 
         event EventHandler<StringEventArgs> SearchTextChanged;
+        event EventHandler MainViewLoaded;
         event EventHandler MagazinesClicked;
         event EventHandler BooksClicked;
         event EventHandler MyMagazinesClicked;

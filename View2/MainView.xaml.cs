@@ -34,6 +34,7 @@ namespace View
         public event EventHandler BooksClicked;
         public event EventHandler MyMagazinesClicked;
         public event EventHandler MyBooksClicked;
+        public event EventHandler MainViewLoaded;
         public event EventHandler<StringEventArgs> SearchTextChanged;
 
         public int SetCounter { set { itemCountTxtBlk.Text = value.ToString(); } }
@@ -85,38 +86,39 @@ namespace View
         {
             titleTxtBlk.Text = "Books";
             SetBooksListPage();
+            if (MainViewLoaded != null)
+                MainViewLoaded(this, EventArgs.Empty);
+
         }
 
         public void SetBooksListPage()
         {
-            searchTxtBox.Text = string.Empty;
             toolBarGrid.Visibility = Visibility.Visible;
             titleTxtBlk.Text = "Books";
             mainFrame.Navigate(typeof(ItemListPage));
-            if (BooksClicked != null)
-                BooksClicked(this, EventArgs.Empty);
+
         }
 
         public void SetMagazinesListPage()
         {
-            searchTxtBox.Text = string.Empty;
             toolBarGrid.Visibility = Visibility.Visible;
             titleTxtBlk.Text = "Magazines";
             mainFrame.Navigate(typeof(ItemListPage));
-            if (MagazinesClicked != null)
-                MagazinesClicked(this, EventArgs.Empty);
+
         }
 
         private void booksTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             SetBooksListPage();
-
+            if (BooksClicked != null)
+                BooksClicked(this, EventArgs.Empty);
         }
 
         private void magazinesTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
             SetMagazinesListPage();
-
+            if (MagazinesClicked != null)
+                MagazinesClicked(this, EventArgs.Empty);
         }
 
 
@@ -127,7 +129,6 @@ namespace View
 
         private void myBooksTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            searchTxtBox.Text = string.Empty;
             toolBarGrid.Visibility = Visibility.Visible;
             mainFrame.Navigate(typeof(ItemListPage));
             titleTxtBlk.Text = "My books";
@@ -137,7 +138,6 @@ namespace View
 
         private void myMagazinesTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            searchTxtBox.Text = string.Empty;
             toolBarGrid.Visibility = Visibility.Visible;
             mainFrame.Navigate(typeof(ItemListPage));
             titleTxtBlk.Text = "My magazines";
@@ -147,7 +147,6 @@ namespace View
 
         private void addNewItemTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            searchTxtBox.Text = string.Empty;
             toolBarGrid.Visibility = Visibility.Collapsed;
             titleTxtBlk.Text = "Add new item";
             ClearCounter();
@@ -156,7 +155,6 @@ namespace View
 
         private void manageUsersTxtBlk_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            searchTxtBox.Text = string.Empty;
             toolBarGrid.Visibility = Visibility.Collapsed;
             titleTxtBlk.Text = "Manage users";
             ClearCounter();
@@ -195,7 +193,6 @@ namespace View
             }
             if (SearchTextChanged != null)
                 SearchTextChanged(this, new StringEventArgs(searchTxtBox.Text));
-
         }
 
         private void searchToolsBtn_Click(object sender, RoutedEventArgs e)

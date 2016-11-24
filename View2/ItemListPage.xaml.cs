@@ -31,14 +31,18 @@ namespace View
             DataContext = this;
         }
 
+        public EnumListType ListType { get; set; }
+
         public event EventHandler<ItemEventArgs> ItemClicked;
 
-        public bool IsBookList { get; set; }
+        //public bool IsBookList { get; set; }
         public string defaultImageLocation
         {
             get
             {
-                if (IsBookList) return "Assets/DefaultBookImage.png";
+                //Showing default image depending on item type
+                if ((ListType & (EnumListType.Books | EnumListType.MyBooks)) != 0)
+                    return "Assets/DefaultBookImage.png";
                 else return "Assets/DefaultMagazineImage.png";
             }
         }

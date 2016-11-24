@@ -25,13 +25,28 @@ namespace Model
             _items.Add(item);
         }
 
-        public List<AbstractItem> SearchByName(bool IsBook, string itemName)
+
+        public List<AbstractItem> SearchByName(EnumListType listType, string itemName, User user)
         {
-            if (IsBook)
-                return new List<AbstractItem>(_items.Where(p => p.ItemName.ToLower().Contains(itemName.ToLower()) && p is Book));
-            else
-                return new List<AbstractItem>(_items.Where(p => p.ItemName.ToLower().Contains(itemName.ToLower()) && p is Journal));
+            switch (listType)
+            {
+                case EnumListType.Books:
+                    return new List<AbstractItem>(GetBooks().Where(p => p.ItemName.ToLower().Contains(itemName.ToLower())));
+                case EnumListType.Magazines:
+                    return new List<AbstractItem>(GetJournals().Where(p => p.ItemName.ToLower().Contains(itemName.ToLower())));
+                case EnumListType.MyBooks:
+                    return new List<AbstractItem>(GetUserBooks(user).Where(p => p.ItemName.ToLower().Contains(itemName.ToLower())));
+                case EnumListType.MyMagazines:
+                    return new List<AbstractItem>(GetUserJournals(user).Where(p => p.ItemName.ToLower().Contains(itemName.ToLower())));
+
+            }
+            return null;
+            //if (IsBook)
+            //    return new List<AbstractItem>(_items.Where(p => p.ItemName.ToLower().Contains(itemName.ToLower()) && p is Book));
+            //else
+            //    return new List<AbstractItem>(_items.Where(p => p.ItemName.ToLower().Contains(itemName.ToLower()) && p is Journal));
         }
+
 
         public List<AbstractItem> AdvancedSearch(AbstractItem item)
         {
@@ -54,6 +69,16 @@ namespace Model
         public List<AbstractItem> GetJournals()
         {
             return new List<AbstractItem>(_items.Where(item => item is Journal));
+        }
+
+        public List<AbstractItem> GetUserBooks(User user)
+        {
+            return new List<AbstractItem>(GetBooks().Where(item => user.MyItems.Contains(item.Guid)));
+        }
+
+        public List<AbstractItem> GetUserJournals(User user)
+        {
+            return new List<AbstractItem>(GetJournals().Where(item => user.MyItems.Contains(item.Guid)));
         }
 
         public void UpdateItem(AbstractItem newitem)

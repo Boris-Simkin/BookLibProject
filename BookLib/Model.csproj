@@ -108,6 +108,7 @@
     <Compile Include="Book.cs" />
     <Compile Include="Category.cs" />
     <Compile Include="Crypt.cs" />
+    <Compile Include="EnumListType.cs" />
     <Compile Include="IItemsCollection.cs" />
     <Compile Include="ItemsCollection.cs" />
     <Compile Include="Journal.cs" />

@@ -7,7 +7,8 @@ namespace Presenter
     public interface IItemListPage
     {
         List<AbstractItem> SourceList { get; set; }
-        bool IsBookList { get; set; }
+        EnumListType ListType { get; set; }
+        //bool IsBookList { get; set; }
         void SetItemDetailsPage(bool isAdmin);
         event EventHandler<ItemEventArgs> ItemClicked;
     }
