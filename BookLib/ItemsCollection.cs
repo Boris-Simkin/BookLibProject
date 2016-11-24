@@ -13,9 +13,6 @@ namespace Model
 {
     public class ItemsCollection : IItemsCollection
     {
-
-        public ItemsCollection() { }
-
         private List<AbstractItem> _items = new List<AbstractItem>();
 
         public bool IsEmpty()
@@ -27,11 +24,6 @@ namespace Model
         {
             _items.Add(item);
         }
-
-        //public AbstractItem GetItem()
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         public List<AbstractItem> SearchByName(bool IsBook, string itemName)
         {
@@ -176,11 +168,16 @@ namespace Model
             return ResultFromServer.Yes;
         }
 
+        /// <summary>
+        /// Get the items from the server
+        /// </summary>
+        /// <returns></returns>
         public async Task<ResultFromServer> GetItemsFromServer()
         {
             var result = await Server.Connect("GetBooks.php");
             if (result != ResultFromServer.ConnectionFailed)
             {
+                // The retrieved content from the server
                 string[] words = Server.ResponseWords;
 
                 for (int i = 0; i < (words.Length - 8); i += 8)

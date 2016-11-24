@@ -44,6 +44,11 @@ namespace View
 
         public void BorrowReturnSucceeded(bool isReading)
         {
+            if (isReading)
+                avaliableСopiesTxtBlk.Text = (int.Parse(avaliableСopiesTxtBlk.Text) - 1).ToString();
+            else
+                avaliableСopiesTxtBlk.Text = (int.Parse(avaliableСopiesTxtBlk.Text) + 1).ToString();
+
             borrowBtn.IsEnabled = true;
             SetReading(isReading);
         }

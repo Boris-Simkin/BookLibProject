@@ -39,7 +39,7 @@ namespace View
             MainPresenter.AdvancedSearchPage = this;
 
             searchBtn.IsEnabled = false;
-
+            datePicker.MinYear = new DateTime(100, 1, 1);
             datePicker.MaxYear = DateTime.Today;
             categoryCombobox.ItemsSource = Enum.GetValues(typeof(Book.BookCategory));
             categoryCombobox.SelectedIndex = 0;

@@ -24,7 +24,6 @@ namespace Presenter
         event EventHandler BooksClicked;
         event EventHandler MyMagazinesClicked;
         event EventHandler MyBooksClicked;
-        event EventHandler ManageUsersClicked;
         event EventHandler Logout;
     }
 }

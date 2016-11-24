@@ -31,7 +31,11 @@ namespace Model
         public User CurrentUser { get; set; }
 
         #region Server management methods
-
+        /// <summary>
+        /// Getting from the server the guids of all items of the user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task<ResultFromServer> GetUserItemsGuid(User user)
         {
             var values = new Dictionary<string, string>();
@@ -40,8 +44,9 @@ namespace Model
 
           if (result == ResultFromServer.Yes)
             {
+                // The retrieved content from the server
                 string[] words = Server.ResponseWords;
-
+                // Adding the guids to user's guids list
                 for (int i = 0; i < (words.Length - 1); i ++)
                     user.MyItems.Add(new Guid(words[i]));
 
@@ -50,6 +55,11 @@ namespace Model
             return ResultFromServer.ConnectionFailed;
         }
 
+        /// <summary>
+        /// Transforms the user into an administrator
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task<ResultFromServer> MakeUserAdmin(User user)
         {
             var values = new Dictionary<string, string>();
@@ -57,6 +67,11 @@ namespace Model
             return await Server.Connect("MakeMeAdmin.php", values);
         }
 
+        /// <summary>
+        /// Removing the user from the server
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task<ResultFromServer> RemoveUserFromServer(User user)
         {
             if (user.IsAdmin)
@@ -67,11 +82,16 @@ namespace Model
             return await Server.Connect("RemoveUser.php", values);
         }
 
+        /// <summary>
+        /// Getting the users from the server
+        /// </summary>
+        /// <returns></returns>
         public async Task<ResultFromServer> GetUsersFromServer()
         {
             var result = await Server.Connect("GetUsers.php");
             if (result == ResultFromServer.Yes)
             {
+                // The retrieved content from the server
                 string[] words = Server.ResponseWords;
 
                 for (int i = 0; i < (words.Length - 4); i += 4)
@@ -91,6 +111,11 @@ namespace Model
             return ResultFromServer.ConnectionFailed;
         }
 
+        /// <summary>
+        /// Authentication by username and password
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task<ResultFromServer> Authentication(User user)
         {
             var values = new Dictionary<string, string>();
@@ -112,6 +137,11 @@ namespace Model
             return result;
         }
 
+        /// <summary>
+        /// Register a new user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task<ResultFromServer> Registration(User user)
         {
             var values = new Dictionary<string, string>();

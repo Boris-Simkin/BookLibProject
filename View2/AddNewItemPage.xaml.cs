@@ -42,6 +42,7 @@ namespace View
             typeCombobox.Items.Add("Magazines");
             typeCombobox.SelectedIndex = 0;
             GuidTxtBlk.Text = _newGuid.ToString();
+            datePicker.MinYear = new DateTime(100, 1, 1);
             datePicker.MaxYear = DateTime.Today;
             categoryCombobox.ItemsSource = Enum.GetValues(typeof(Book.BookCategory));
             categoryCombobox.SelectedIndex = 0;
@@ -51,12 +52,6 @@ namespace View
         {
             return itemNameTxtBox.Text != string.Empty;
         }
-
-        //public static bool CheckURLValid(string source)
-        //{
-        //    Uri uriResult;
-        //    return Uri.TryCreate(source, UriKind.Absolute, out uriResult) && uriResult.Scheme == Uri.UriSchemeHttp;
-        //}
 
         public event EventHandler<ItemEventArgs> Submit;
 
@@ -82,11 +77,6 @@ namespace View
 
             if (Submit != null)
                 Submit(this, new ItemEventArgs(_newItem));
-
-            //if (typeCombobox.SelectedIndex == 0)
-            //    Frame.Navigate(typeof(View.MessagePage), "Book is created.");
-            //else
-            //    Frame.Navigate(typeof(View.MessagePage), "Magazine is created.");
         }
 
         private void typeCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)

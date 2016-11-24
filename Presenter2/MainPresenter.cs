@@ -134,21 +134,12 @@ namespace Presenter
 
         private async static void BorrowReturnItem(AbstractItem item)
         {
-            //if (item.BorrowedCopies >= item.CopyNumber)
-            //    throw new ArgumentException("No free items.");
-
-            //    throw new ArgumentException("The user already borrow this item.");
             Task<ResultFromServer> task;
             task = _itemsCollection.BorrowReturnServer(_users.CurrentUser, item, !_users.CurrentUser.IsReading(item));
-
-            //_itemsCollection.Borrow(_users.CurrentUser, item);
-            //else _itemsCollection.Return(_users.CurrentUser, item);
-
 
             switch (await task)
             {
                 case ResultFromServer.Yes:
-                    //     _itemsCollection.UpdateItem(item);
 
                     if (!_users.CurrentUser.IsReading(item))
                     {
@@ -183,8 +174,6 @@ namespace Presenter
 
                     }
 
-
-
                     break;
                 case ResultFromServer.No:
                     _mainView.ShowMessage("This item does not exist");
@@ -198,14 +187,19 @@ namespace Presenter
 
         }
 
-
         private static async void _itemDetailsPageAdmin_Delete(object sender, ItemEventArgs e)
         {
+            if (e.Item.BorrowedCopies > 0 )
+            {
+                _mainView.ShowMessage($"Before you can remove the {e.Item} all users must return all copies");
+                return;
+            }
+
             ResultFromServer task = await _itemsCollection.DeleteFromServer(e.Item);
             AbstractItem temp;
 
             if (task == ResultFromServer.No)
-                _mainView.ShowMessage("This item does not exist");
+                _mainView.ShowMessage($"This {e.Item} does not exist");
 
             if (task == ResultFromServer.Yes || task == ResultFromServer.No)
             {
@@ -408,17 +402,9 @@ namespace Presenter
                 _mainView.MyBooksClicked += _mainView_MyBooksClicked;
                 _mainView.MyMagazinesClicked += _mainView_MyMagazinesClicked;
                 _mainView.SearchTextChanged += _mainView_SearchTextChanged;
-                _mainView.ManageUsersClicked += _mainView_ManageUsersClicked;
                 _mainView.Logout += _mainView_Logout;
             }
         }
-
-        private static void _mainView_ManageUsersClicked(object sender, EventArgs e)
-        {
-            //await Task.Delay(TimeSpan.FromSeconds(30));
-            //ManageUsersPage.SourceList = _user.GetUsers();
-        }
-
 
         private static void _mainView_Logout(object sender, EventArgs e)
         {

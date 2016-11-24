@@ -14,21 +14,6 @@ namespace Model
             _subCategory = subCategory;
         }
 
-        //static Book()
-        //{
-        //    SubCategoryDict = new Dictionary<BookCategory, List<string>>();
-        //}
-
-        //void UpdateDictionary(string value)
-        //{
-        //    //Adding the category key to the dictionary if it's not exist
-        //    if (!SubCategoryDict.ContainsKey(_category))
-        //        SubCategoryDict.Add(_category, new List<string>());
-        //    //Adding the sub category to the dictionary
-        //    SubCategoryDict[_category].Add(value);
-        //    _subCategory = value;
-        //}
-
         public enum BookCategory
         {
             Book,
@@ -50,26 +35,20 @@ namespace Model
         public BookCategory? Category
         {
             get { return _category; }
-            set
-            {
-                //UpdateDictionary(_subCategory);
-                _category = value;
-            }
+            set { _category = value; }
         }
-
-       // static Dictionary<BookCategory, List<string>> SubCategoryDict;
 
         private string _subCategory;
 
         public override string SubCategory
         {
             get { return _subCategory; }
-            set
-            {
-                //UpdateDictionary(_subCategory);
-                _subCategory = value;
-            }
+            set { _subCategory = value; }
         }
 
+        public override string ToString()
+        {
+            return "book";
+        }
     }
 }

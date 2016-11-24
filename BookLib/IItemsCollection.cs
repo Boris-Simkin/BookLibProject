@@ -8,20 +8,21 @@ namespace Model
 {
     public interface IItemsCollection
     {
+        #region Server management methods
         Task<ResultFromServer> GetItemsFromServer();
         Task<ResultFromServer> AddItemToServer(AbstractItem item);
         Task<ResultFromServer> DeleteFromServer(AbstractItem item);
         Task<ResultFromServer> UpdateItemInServer(AbstractItem item);
         Task<ResultFromServer> BorrowReturnServer(User user, AbstractItem item, bool borrow);
-        void AddItem(AbstractItem item);
-        void UpdateItem(AbstractItem newitem);
-        void DeleteItem(AbstractItem item);
-        void ReturnAllUserItems(User user);
-        //AbstractItem GetItem();
+        #endregion
         List<AbstractItem> SearchByName(bool IsBook, string itemName);
         List<AbstractItem> AdvancedSearch(AbstractItem item);
         List<AbstractItem> GetJournals();
         List<AbstractItem> GetBooks();
+        void AddItem(AbstractItem item);
+        void UpdateItem(AbstractItem newitem);
+        void DeleteItem(AbstractItem item);
+        void ReturnAllUserItems(User user);
         void ClearList();
     }
 }
